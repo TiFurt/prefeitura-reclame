@@ -1,16 +1,24 @@
-import { StyleSheet, ScrollView, styled } from "react-native";
+import { useState, useEffect } from "react";
+import { ScrollView, StyleSheet } from "react-native";
+import { FloatingAction } from "react-native-floating-action";
 import BasePage from "../components/BasePage";
 import CardComponent from "../components/CardComponent";
-import { FloatingAction } from "react-native-floating-action";
 import { routes } from "../routes";
 
-export default function HomePage({ navigation }) {
+export default function HomePage({ route, navigation }) {
+  const _getCards = (claims) => {
+    return claims.map((claim) => <CardComponent key={claim.id} claim={claim} />);
+  };
+
+  const [claims, setClaims] = useState(_getCards(route.params.claims));
+
   const actions = [
     {
       text: "Create Claim",
       icon: require("../assets/icons/plus-solid.png"),
       name: "bt_add_claim",
       position: 1,
+      textColor: "#1253bc",
     },
   ];
 
@@ -18,20 +26,13 @@ export default function HomePage({ navigation }) {
     navigation.navigate(routes.CreateClaim);
   };
 
+  useEffect(() => {
+    setClaims(_getCards(route.params.claims));
+  }, [route.params.claims]);
+
   return (
     <BasePage>
-      <ScrollView contentContainerStyle={styles.scrollView}>
-        <CardComponent
-          claim={{
-            title: "Claim 1",
-            tags: [
-              { name: "Tag Test 1", color: "lightgreen" },
-              { name: "Tag Test 2", color: "lightgreen" },
-            ],
-          }}
-        />
-        <CardComponent claim={{ title: "Claim 2" }} />
-      </ScrollView>
+      <ScrollView contentContainerStyle={styles.scrollView}>{claims}</ScrollView>
 
       <FloatingAction overrideWithAction actions={actions} onPressItem={_redirectToCreateClaimPage} />
     </BasePage>

@@ -11,9 +11,9 @@ export default function CardComponent({ claim }) {
 
   return (
     <View style={styles.card}>
-      <Text style={styles.title}>{complaining.title}</Text>
+      <Text style={styles.title}>{complaining.name}</Text>
       <View style={styles.tags}>{tags}</View>
-      <Text style={styles.subtitle}>Data da reclamação: {complaining.date}</Text>
+      <Text style={styles.subtitle}>Data da reclamação: {new Date(complaining.date).toLocaleDateString()}</Text>
     </View>
   );
 }

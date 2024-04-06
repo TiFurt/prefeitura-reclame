@@ -1,9 +1,9 @@
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import WelcomePage from "./pages/WelcomePage";
+import CreateClaimPage from "./pages/CreateClaimPage";
 import HomePage from "./pages/HomePage";
 import MapPage from "./pages/MapPage";
-import CreateClaimPage from "./pages/CreateClaimPage";
+import WelcomePage from "./pages/WelcomePage";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import { routes } from "./routes";
@@ -19,7 +19,7 @@ export default function App() {
         <Stack.Screen name={routes.Register} component={RegisterPage} />
         <Stack.Screen name={routes.Home} component={HomePage} />
         <Stack.Screen name={routes.Map} component={MapPage} />
-        <Stack.Screen name={routes.CreateClaim} component={CreateClaimPage} options={{ title: "Create Claim" }} />
+        <Stack.Screen name={routes.CreateClaim} component={CreateClaimPage} options={{ title: "Criar Reclamação" }} />
       </Stack.Navigator>
     </NavigationContainer>
   );

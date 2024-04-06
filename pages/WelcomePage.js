@@ -16,7 +16,7 @@ export default function WelcomePage({ navigation }) {
     <BasePage>
       <Text>Welcome Page</Text>
       <Button title='Login' onPress={_goToLogin}></Button>
-      <Button title='Go to home' onPress={_goToRegister}></Button>
+      <Button title='Register' onPress={_goToRegister}></Button>
     </BasePage>
   );
 }

@@ -1,9 +1,10 @@
-import { Text } from 'react-native';
-import BasePage from '../components/BasePage';
-import React, { useState, useEffect } from 'react';
-import { hasHardwareAsync, authenticateAsync } from 'expo-local-authentication';
-import AuthService from '../services/AuthService';
-import { routes } from '../routes';
+import { authenticateAsync, hasHardwareAsync } from "expo-local-authentication";
+import React, { useEffect, useState } from "react";
+import { Text } from "react-native";
+import BasePage from "../components/BasePage";
+import { routes } from "../routes";
+import AuthService from "../services/AuthService";
+import ClaimService from "../services/ClaimService";
 
 export default function LoginPage({ navigation }) {
   const [biometry, setBiometry] = useState(false);
@@ -15,8 +16,10 @@ export default function LoginPage({ navigation }) {
     }
 
     AuthService.getInstance().login();
-    navigation.navigate(routes.Home);
-  }
+    navigation.navigate(routes.Home, {
+      claims: ClaimService.getInstance().claims,
+    });
+  };
 
   hasBiometryHardware = async () => {
     const valid = await hasHardwareAsync();
@@ -25,7 +28,7 @@ export default function LoginPage({ navigation }) {
     if (valid) {
       await authenticateBiometryAsync();
     }
-  }
+  };
 
   useEffect(() => {
     (async () => await hasBiometryHardware())();

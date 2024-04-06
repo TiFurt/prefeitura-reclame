@@ -5,16 +5,12 @@ export default class AuthService {
 
   authenticated = signal(false);
 
-  constructor() {
-    if (AuthService.instance) {
-      return AuthService.instance;
+  static getInstance() {
+    if (AuthService.instance == null) {
+      AuthService.instance = new AuthService();
     }
 
-    AuthService.instance = this;
-  }
-
-  static getInstance() {
-    return AuthService.instance || new AuthService();
+    return AuthService.instance;
   }
 
   login() {

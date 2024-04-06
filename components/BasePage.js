@@ -14,5 +14,6 @@ export default function BasePage({ children }) {
 const style = StyleSheet.create({
   container: {
     height: '100%',
+    padding: 10,
   }
 });
