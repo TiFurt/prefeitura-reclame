@@ -2,7 +2,7 @@ import { Text } from 'react-native';
 import BasePage from '../components/BasePage';
 import { FloatingAction } from "react-native-floating-action";
 
-export default function HomePage() {
+export default function HomePage({ navigation }) {
   const actions = [
     {
       text: "Create Claim",
@@ -12,6 +12,10 @@ export default function HomePage() {
     }
   ];
 
+  const _redirectToCreateClaimPage = () => {
+    navigation.navigate("CreateClaimPage");
+  };
+
   return (
     <BasePage>
       <Text>Home Page</Text>
@@ -19,10 +23,7 @@ export default function HomePage() {
       <FloatingAction
         overrideWithAction
         actions={actions}
-
-        onPressItem={name => {
-          console.log(`selected button: ${name}`);
-        }}
+        onPressItem={_redirectToCreateClaimPage}
       />
     </BasePage>
   );
