@@ -1,6 +1,7 @@
 import { Text } from 'react-native';
 import BasePage from '../components/BasePage';
 import { FloatingAction } from "react-native-floating-action";
+import { routes } from '../routes';
 
 export default function HomePage({ navigation }) {
   const actions = [
@@ -13,7 +14,7 @@ export default function HomePage({ navigation }) {
   ];
 
   const _redirectToCreateClaimPage = () => {
-    navigation.navigate("CreateClaimPage");
+    navigation.navigate(routes.CreateClaim);
   };
 
   return (

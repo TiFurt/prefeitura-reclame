@@ -4,17 +4,18 @@ import WelcomePage from './pages/WelcomePage';
 import HomePage from './pages/HomePage';
 import MapPage from './pages/MapPage';
 import CreateClaimPage from './pages/CreateClaimPage';
+import { routes } from './routes';
 
 const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName='Welcome'>
-        <Stack.Screen name="Welcome" component={WelcomePage} />
-        <Stack.Screen name="Home" component={HomePage} />
-        <Stack.Screen name="Map" component={MapPage} />
-        <Stack.Screen name="CreateClaimPage" component={CreateClaimPage} />
+      <Stack.Navigator initialRouteName={routes.Welcome}>
+        <Stack.Screen name={routes.Welcome} component={WelcomePage} />
+        <Stack.Screen name={routes.Home} component={HomePage} />
+        <Stack.Screen name={routes.Map} component={MapPage} />
+        <Stack.Screen name={routes.CreateClaim} component={CreateClaimPage} options={{ title: 'Create Claim' }} />
       </Stack.Navigator>
     </NavigationContainer>
   );
