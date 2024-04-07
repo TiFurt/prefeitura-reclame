@@ -63,4 +63,13 @@ export default class ClaimService {
   createClaim(claim) {
     this.claims = [...this.claims, { id: uuidv4(), date: new Date(), ...claim }];
   }
+
+  updateClaim(claim) {
+    this.claims = this.claims.map((c) => {
+      if (c.id === claim.id) {
+        return { ...c, ...claim };
+      }
+      return c;
+    });
+  }
 }

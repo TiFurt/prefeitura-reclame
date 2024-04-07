@@ -42,6 +42,21 @@ export default function CreateClaimPage({ route, navigation }) {
       return;
     }
 
+    if (claim.id) {
+      ClaimService.getInstance().updateClaim({
+        id: claim.id,
+        name,
+        description,
+        tags: selectedTags,
+        image: base64,
+        location,
+      });
+      navigation.navigate(routes.View, {
+        claim: ClaimService.getInstance().getClaimById(claim.id),
+      });
+      return;
+    }
+
     ClaimService.getInstance().createClaim({
       name,
       description,
