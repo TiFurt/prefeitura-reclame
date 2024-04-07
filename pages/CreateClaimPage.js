@@ -1,5 +1,6 @@
 import { AntDesign, FontAwesome5 } from "@expo/vector-icons";
-import { getCurrentPositionAsync, requestForegroundPermissionsAsync } from "expo-location";
+import { PermissionStatus, getCurrentPositionAsync, requestForegroundPermissionsAsync } from "expo-location";
+import { requestPermissionsAsync, saveToLibraryAsync } from 'expo-media-library';
 import { useEffect, useState } from "react";
 import { Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { MultiSelect } from "react-native-element-dropdown";
@@ -8,28 +9,31 @@ import FloatingActionComponent from "../components/FloatingActionComponent";
 import { routes } from "../routes";
 import ClaimService from "../services/ClaimService";
 
+
 export default function CreateClaimPage({ route, navigation }) {
   const { claim } = route?.params || {};
 
   const [name, onChangeName] = useState(claim?.name || "");
   const [description, onChangeDescription] = useState(claim?.description || "");
   const [selectedTags, setSelectedTags] = useState(claim?.tags || []);
-  const [base64, setBase64] = useState(claim?.image || null);
+  const [photo, setPhoto] = useState(claim?.image || null);
   const [location, setLocation] = useState(null);
   const [hasLocation, setHasLocation] = useState(false);
+  const [hasMediaLibraryPermission, setHasMediaLibraryPermission] = useState();
 
   useEffect(() => {
     (async () => {
-      let { status } = await requestForegroundPermissionsAsync();
-      if (status !== 'granted') {
-        setHasLocation(false);
-        return;
-      }
+      const locationPermission = await requestForegroundPermissionsAsync();
+      const mediaLibraryPermission = await requestPermissionsAsync();
 
-      setHasLocation(true);
-      let location = await getCurrentPositionAsync({});
-      const { latitude, longitude, altitude } = location.coords;
-      setLocation({ latitude, longitude, altitude });
+      setHasLocation(locationPermission.status === PermissionStatus.GRANTED);
+      setHasMediaLibraryPermission(mediaLibraryPermission.status === PermissionStatus.GRANTED);
+
+      if (locationPermission.status === PermissionStatus.GRANTED) {
+        let location = await getCurrentPositionAsync({});
+        const { latitude, longitude, altitude } = location.coords;
+        setLocation({ latitude, longitude, altitude });
+      }
     })();
   }, []);
 
@@ -37,10 +41,16 @@ export default function CreateClaimPage({ route, navigation }) {
     return { name: tag.name, value: tag };
   });
 
+  const _savePhotoOnGallery = () => {
+    saveToLibraryAsync(photo.uri)
+  };
+
   const _saveClaim = () => {
-    if (!name || !description || !selectedTags.length || !base64 || !location) {
+    if (!name || !description || !selectedTags.length || !photo, !location) {
       return;
     }
+
+    _savePhotoOnGallery();
 
     if (claim?.id) {
       ClaimService.getInstance().updateClaim({
@@ -48,7 +58,7 @@ export default function CreateClaimPage({ route, navigation }) {
         name,
         description,
         tags: selectedTags,
-        image: base64,
+        image: photo.base64,
         location,
       });
       navigation.navigate(routes.View, {
@@ -61,7 +71,7 @@ export default function CreateClaimPage({ route, navigation }) {
       name,
       description,
       tags: selectedTags,
-      image: base64,
+      image: photo.base64,
       location,
     });
     navigation.navigate(routes.Home, {
@@ -71,14 +81,14 @@ export default function CreateClaimPage({ route, navigation }) {
 
   const _openCamera = () => {
     navigation.navigate(routes.Camera, {
-      setBase64,
+      setPhoto,
     });
   }
 
   let cameraView = null;
-  if (base64) {
+  if (photo?.base64) {
     cameraView = (
-      <Image style={styles.img} source={{ uri: `data:image/png;base64,${base64}` }} />
+      <Image style={styles.img} source={{ uri: `data:image/png;base64,${photo.base64}` }} />
     );
   }
 
@@ -86,6 +96,13 @@ export default function CreateClaimPage({ route, navigation }) {
     return (
       <BasePage>
         <Text>Libere o uso da localização</Text>
+      </BasePage>
+    );
+  }
+  else if (!hasMediaLibraryPermission) {
+    return (
+      <BasePage>
+        <Text>Libere o uso da galeria</Text>
       </BasePage>
     );
   }
@@ -129,10 +146,10 @@ export default function CreateClaimPage({ route, navigation }) {
               <TouchableOpacity
                 onPress={_openCamera}
                 style={styles.takePhotoButton}
-                title={base64 ? "Tirar outra foto" : "Tirar foto"}
+                title={photo ? "Tirar outra foto" : "Tirar foto"}
                 accessibilityLabel="Tirar foto"
               >
-                <Text style={{ color: "white" }}>{base64 ? "Tirar outra foto" : "Tirar foto"}</Text>
+                <Text style={{ color: "white" }}>{photo ? "Tirar outra foto" : "Tirar foto"}</Text>
                 <AntDesign style={styles.icon} color="white" name="camera" size={20} />
               </TouchableOpacity>
             </View>
@@ -224,7 +241,7 @@ styles = StyleSheet.create({
   },
   img: {
     width: "100%",
-    height: 500,
+    height: 700,
     borderRadius: 5,
   },
 });

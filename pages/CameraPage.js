@@ -1,8 +1,7 @@
 import { AntDesign } from "@expo/vector-icons";
 import { Camera, CameraType } from 'expo-camera';
 import { useEffect, useRef, useState } from 'react';
-import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 export default function CameraPage({ route, navigation }) {
   const ref = useRef(null);
   const [hasPermission, setHasPermission] = useState(null);
@@ -24,10 +23,10 @@ export default function CameraPage({ route, navigation }) {
 
   async function take() {
     if (ref) {
-      const data = await ref.current.takePictureAsync({ base64: true, quality: 0.5 });
-      const { setBase64 } = route.params;
+      const picture = await ref.current.takePictureAsync({ base64: true, quality: 0.5 });
+      const { setPhoto } = route.params;
 
-      setBase64(data.base64)
+      setPhoto(picture)
       navigation.goBack()
     }
   }
