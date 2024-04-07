@@ -46,10 +46,6 @@ export default function CreateClaimPage({ route, navigation }) {
   };
 
   const _saveClaim = () => {
-    if (!name || !description || !selectedTags.length || !photo, !location) {
-      return;
-    }
-
     _savePhotoOnGallery();
 
     if (claim?.id) {
