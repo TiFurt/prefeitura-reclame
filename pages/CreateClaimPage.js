@@ -158,7 +158,6 @@ styles = StyleSheet.create({
     width: "100%",
   },
   container: {
-    height: "100%",
     display: "flex",
     flexDirection: "column",
     justifyContent: "space-between",
@@ -169,7 +168,6 @@ styles = StyleSheet.create({
     flexWrap: "wrap",
     gap: 10,
     width: "100%",
-    height: "90%",
     justifyContent: "center",
   },
   input: {
@@ -226,6 +224,7 @@ styles = StyleSheet.create({
   },
   img: {
     width: "100%",
-    height: 500
+    height: 500,
+    borderRadius: 5,
   },
 });

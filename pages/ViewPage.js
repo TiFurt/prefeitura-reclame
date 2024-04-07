@@ -1,10 +1,10 @@
-import { Text, View, StyleSheet, ScrollView, useWindowDimensions, Image, Center } from "react-native";
-import MapView, { Marker } from 'react-native-maps';
-import TagComponent from "../components/TagComponent";
-import { TabView, SceneMap } from 'react-native-tab-view';
-import { useState } from 'react';
-import FloatingActionComponent from "../components/FloatingActionComponent";
 import { AntDesign } from "@expo/vector-icons";
+import { useState } from 'react';
+import { Image, ScrollView, StyleSheet, Text, View, useWindowDimensions } from "react-native";
+import MapView, { Marker } from 'react-native-maps';
+import { SceneMap, TabView } from 'react-native-tab-view';
+import FloatingActionComponent from "../components/FloatingActionComponent";
+import TagComponent from "../components/TagComponent";
 import { routes } from "../routes";
 
 export default function ViewPage({ route, navigation }) {
@@ -25,16 +25,18 @@ export default function ViewPage({ route, navigation }) {
   };
 
   const infoTab = () => (
-    <ScrollView style={styles.container}>
-      <Text style={styles.header}>{claim.name}</Text>
-      <View style={styles.tags}>{tags}</View>
-      <View style={styles.description}>
-        <Text>{claim.description}</Text>
-      </View>
-      {claim.image
-        ? <Image source={{ uri: `data:image/png;base64,${claim.image}` }} style={styles.image} />
-        : <View style={styles.noImage}><Text>Imagem não registrada</Text></View>
-      }
+    <View style={styles.container}>
+      <ScrollView contentContainerStyle={styles.scrollView}>
+        <Text style={styles.header}>{claim.name}</Text>
+        <View style={styles.tags}>{tags}</View>
+        <View style={styles.description}>
+          <Text>{claim.description}</Text>
+        </View>
+        {claim.image
+          ? <Image source={{ uri: `data:image/png;base64,${claim.image}` }} style={styles.image} />
+          : <View style={styles.noImage}><Text>Imagem não registrada</Text></View>
+        }
+      </ScrollView>
 
       <FloatingActionComponent
         onPressItem={_redirectToCreateClaimPage}
@@ -42,7 +44,7 @@ export default function ViewPage({ route, navigation }) {
       >
         <AntDesign color="white" name="edit" size={20} />
       </FloatingActionComponent>
-    </ScrollView>
+    </View>
   )
 
   const getMarker = () => (
@@ -82,7 +84,11 @@ export default function ViewPage({ route, navigation }) {
 }
 
 const styles = StyleSheet.create({
+  scrollView: {
+    width: "100%",
+  },
   container: {
+    height: "100%",
     backgroundColor: "#fff",
     padding: 10,
   },

@@ -4,6 +4,13 @@ import { v4 as uuidv4 } from "uuid";
 export default class ClaimService {
   static instance = null;
 
+  tags = [
+    { name: "Rua", color: "lightgreen" },
+    { name: "Poste", color: "lightgreen" },
+    { name: "Casa", color: "lightgreen" },
+    { name: "Morro", color: "lightgreen" },
+  ];
+
   claims = [
     {
       id: "21aa2ab5-5c2f-4876-b427-480eebcad81a",
@@ -11,8 +18,8 @@ export default class ClaimService {
       date: "2024-01-01",
       description: "Lâmpada do poste da rua queimada",
       tags: [
-        { name: "Rua", color: "lightgreen" },
-        { name: "Poste", color: "lightgreen" },
+        this.tags[0],
+        this.tags[1],
       ],
       location: {
         latitude: 37.422094,
@@ -26,8 +33,8 @@ export default class ClaimService {
       name: "Deslizamento de terra",
       description: "Perigo de deslizamento de terra em cima da casa",
       tags: [
-        { name: "Casa", color: "lightgreen" },
-        { name: "Morro", color: "lightgreen" },
+        this.tags[2],
+        this.tags[3],
       ],
       location: {
         latitude: -23.55052,
@@ -35,13 +42,6 @@ export default class ClaimService {
         altitude: 0,
       },
     },
-  ];
-
-  tags = [
-    { name: "Rua", color: "lightgreen" },
-    { name: "Poste", color: "lightgreen" },
-    { name: "Casa", color: "lightgreen" },
-    { name: "Morro", color: "lightgreen" },
   ];
 
   static getInstance() {
