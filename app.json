@@ -25,6 +25,24 @@
     },
     "web": {
       "favicon": "./assets/univassouras.png"
-    }
+    },
+    "plugins": [
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Permiter $(PRODUCT_NAME) tenha acesso a sua câmera",
+          "microphonePermission": "Permitir $(PRODUCT_NAME) tenha acesso ao seu microfone",
+          "recordAudioAndroid": true
+        }
+      ],
+      [
+        "expo-media-library",
+        {
+          "photosPermission": "Allow $(PRODUCT_NAME) to access your photos.",
+          "savePhotosPermission": "Allow $(PRODUCT_NAME) to save photos.",
+          "isAccessMediaLocationEnabled": true
+        }
+      ]
+    ]
   }
 }
