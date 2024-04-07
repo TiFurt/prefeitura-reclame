@@ -4,5 +4,6 @@ export const routes = {
   Map: 'Map',
   CreateClaim: 'CreateClaim',
   Login: 'Login',
-  Register: 'Register'
+  Register: 'Register',
+  Camera: 'Camera',
 }

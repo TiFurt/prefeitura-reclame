@@ -1,4 +1,4 @@
-import { Button, Text } from 'react-native';
+import { Button, StyleSheet, Text, View } from 'react-native';
 import BasePage from '../components/BasePage';
 import { routes } from '../routes';
 
@@ -14,9 +14,18 @@ export default function WelcomePage({ navigation }) {
 
   return (
     <BasePage>
-      <Text>Welcome Page</Text>
-      <Button title='Login' onPress={_goToLogin}></Button>
-      <Button title='Register' onPress={_goToRegister}></Button>
+      <View style={styles.container}>
+        <Text>Welcome Page</Text>
+        <Button title='Login' onPress={_goToLogin}></Button>
+        <Button title='Register' onPress={_goToRegister}></Button>
+      </View>
     </BasePage>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    display: 'flex',
+    gap: 10,
+  }
+});

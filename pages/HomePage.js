@@ -1,8 +1,9 @@
-import { useState, useEffect } from "react";
+import { AntDesign } from "@expo/vector-icons";
+import { useEffect, useState } from "react";
 import { ScrollView, StyleSheet } from "react-native";
-import { FloatingAction } from "react-native-floating-action";
 import BasePage from "../components/BasePage";
 import CardComponent from "../components/CardComponent";
+import FloatingActionComponent from "../components/FloatingActionComponent";
 import { routes } from "../routes";
 
 export default function HomePage({ route, navigation }) {
@@ -11,16 +12,6 @@ export default function HomePage({ route, navigation }) {
   };
 
   const [claims, setClaims] = useState(_getCards(route.params.claims));
-
-  const actions = [
-    {
-      text: "Create Claim",
-      icon: require("../assets/icons/plus-solid.png"),
-      name: "bt_add_claim",
-      position: 1,
-      textColor: "#1253bc",
-    },
-  ];
 
   const _redirectToCreateClaimPage = () => {
     navigation.navigate(routes.CreateClaim);
@@ -34,7 +25,12 @@ export default function HomePage({ route, navigation }) {
     <BasePage>
       <ScrollView contentContainerStyle={styles.scrollView}>{claims}</ScrollView>
 
-      <FloatingAction overrideWithAction actions={actions} onPressItem={_redirectToCreateClaimPage} />
+      <FloatingActionComponent
+        onPressItem={_redirectToCreateClaimPage}
+        title="Create Claim" accessibilityLabel="Create Claim"
+      >
+        <AntDesign style={styles.icon} color="white" name="plus" size={20} />
+      </FloatingActionComponent>
     </BasePage>
   );
 }

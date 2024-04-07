@@ -1,10 +1,11 @@
-import { StyleSheet, TextInput, View, Button } from "react-native";
-import BasePage from "../components/BasePage";
+import { AntDesign, FontAwesome5 } from "@expo/vector-icons";
 import { useState } from "react";
+import { Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { MultiSelect } from "react-native-element-dropdown";
-import { AntDesign } from "@expo/vector-icons";
-import ClaimService from "../services/ClaimService";
+import BasePage from "../components/BasePage";
+import FloatingActionComponent from "../components/FloatingActionComponent";
 import { routes } from "../routes";
+import ClaimService from "../services/ClaimService";
 
 export default function CreateClaimPage({ navigation }) {
   const claimService = ClaimService.getInstance();
@@ -12,6 +13,8 @@ export default function CreateClaimPage({ navigation }) {
   const [name, onChangeName] = useState("");
   const [description, onChangeDescription] = useState("");
   const [selectedTags, setSelectedTags] = useState([]);
+  const [captured, setCaptured] = useState(null);
+  const [base64, setBase64] = useState(null);
 
   const tags = claimService.getTags().map((tag) => {
     return { name: tag.name, value: tag };
@@ -28,47 +31,96 @@ export default function CreateClaimPage({ navigation }) {
     });
   };
 
+  const _openCamera = () => {
+    navigation.navigate(routes.Camera, {
+      setCaptured,
+      setBase64,
+    });
+  }
+
+  let cameraView = null;
+  if (captured) {
+    cameraView = (
+      <Image style={styles.img} source={{ uri: 'data:image/png;base64,' + base64 }} />
+    );
+  }
+
+  const actions = [
+    {
+      text: "Create Claim",
+      icon: require("../assets/icons/plus-solid.png"),
+      name: "bt_add_claim",
+      textColor: "#1253bc",
+    },
+  ];
+
   return (
     <BasePage>
-      <View style={styles.container}>
-        <View style={styles.fieldsContainer}>
-          <TextInput style={styles.input} onChangeText={onChangeName} value={name} placeholder="Nome" />
+      <ScrollView contentContainerStyle={styles.scrollView}>
+        <View style={styles.container}>
+          <View style={styles.fieldsContainer}>
+            <TextInput style={styles.input} onChangeText={onChangeName} value={name} placeholder="Nome" />
 
-          <TextInput
-            style={styles.input}
-            onChangeText={onChangeDescription}
-            value={description}
-            placeholder="Descrição"
-          />
+            <TextInput
+              style={styles.input}
+              onChangeText={onChangeDescription}
+              value={description}
+              placeholder="Descrição"
+            />
 
-          <MultiSelect
-            style={styles.dropdown}
-            placeholderStyle={styles.placeholderStyle}
-            selectedTextStyle={styles.selectedTextStyle}
-            inputSearchStyle={styles.inputSearchStyle}
-            iconStyle={styles.iconStyle}
-            search
-            data={tags}
-            labelField="name"
-            valueField="value"
-            placeholder="Categorias"
-            searchPlaceholder="Search..."
-            value={selectedTags}
-            onChange={(item) => {
-              setSelectedTags(item);
-            }}
-            renderLeftIcon={() => <AntDesign style={styles.icon} color="black" name="tags" size={20} />}
-            selectedStyle={styles.selectedStyle}
-          />
+            <MultiSelect
+              style={styles.dropdown}
+              placeholderStyle={styles.placeholderStyle}
+              selectedTextStyle={styles.selectedTextStyle}
+              inputSearchStyle={styles.inputSearchStyle}
+              iconStyle={styles.iconStyle}
+              search
+              data={tags}
+              labelField="name"
+              valueField="value"
+              placeholder="Categorias"
+              searchPlaceholder="Search..."
+              value={selectedTags}
+              onChange={(item) => {
+                setSelectedTags(item);
+              }}
+              renderLeftIcon={() => <AntDesign style={styles.icon} color="black" name="tags" size={20} />}
+              selectedStyle={styles.selectedStyle}
+            />
+
+            <View style={styles.imageContainer}>
+              <TouchableOpacity
+                onPress={_openCamera}
+                style={styles.takePhotoButton}
+                title={captured ? "Tirar outra foto" : "Tirar foto"}
+                accessibilityLabel="Tirar foto"
+              >
+                <Text style={{ color: "white" }}>{captured ? "Tirar outra foto" : "Tirar foto"}</Text>
+                <AntDesign style={styles.icon} color="white" name="camera" size={20} />
+              </TouchableOpacity>
+            </View>
+
+            {cameraView}
+          </View>
         </View>
+      </ScrollView>
 
-        <Button onPress={_saveClaim} title="Enviar" color="#1253bc" accessibilityLabel="Enviar reclamação" />
-      </View>
+      <FloatingActionComponent
+        onPressItem={_saveClaim}
+        title="Enviar"
+        accessibilityLabel="Enviar reclamação"
+      >
+        <FontAwesome5 name="telegram-plane" size={20} color="white" />
+      </FloatingActionComponent>
     </BasePage>
   );
 }
 
 styles = StyleSheet.create({
+  scrollView: {
+    width: "100%",
+    height: "100%",
+  },
   container: {
     height: "100%",
     display: "flex",
@@ -81,6 +133,8 @@ styles = StyleSheet.create({
     flexWrap: "wrap",
     gap: 10,
     width: "100%",
+    height: "90%",
+    justifyContent: "center",
   },
   input: {
     width: "48%",
@@ -117,5 +171,25 @@ styles = StyleSheet.create({
   },
   selectedStyle: {
     borderRadius: 12,
+  },
+  imageContainer: {
+    width: "100%",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  takePhotoButton: {
+    display: "flex",
+    flexDirection: "row",
+    gap: 5,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#1253bc",
+    borderRadius: 10,
+    padding: 10,
+  },
+  img: {
+    width: "100%",
+    height: "100%",
   },
 });

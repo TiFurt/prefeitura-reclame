@@ -1,19 +1,17 @@
-import React, { useState } from "react";
 import { Text, View, StyleSheet } from "react-native";
 import TagComponent from "./TagComponent";
 
 export default function CardComponent({ claim }) {
-  const [complaining, setComplaining] = useState(claim);
 
-  const tags = complaining?.tags?.map((tag) => {
+  const tags = claim?.tags?.map((tag) => {
     return <TagComponent key={tag.name} tag={tag} />;
   });
 
   return (
     <View style={styles.card}>
-      <Text style={styles.title}>{complaining.name}</Text>
+      <Text style={styles.title}>{claim.name}</Text>
       <View style={styles.tags}>{tags}</View>
-      <Text style={styles.subtitle}>Data da reclamação: {new Date(complaining.date).toLocaleDateString()}</Text>
+      <Text style={styles.subtitle}>Data da reclamação: {new Date(claim.date).toLocaleDateString()}</Text>
     </View>
   );
 }
