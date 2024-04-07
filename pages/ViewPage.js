@@ -45,8 +45,16 @@ export default function ViewPage({ route, navigation }) {
     </ScrollView>
   )
 
+  const getMarker = () => (
+    <Marker
+      coordinate={region}
+      title={claim.name}
+      description={claim.description}
+    />
+  );
+
   const mapTab = () => (
-    <MapView loadingEnabled={true} region={region} style={styles.map}></MapView>
+    <MapView loadingEnabled={true} region={region} style={styles.map}>{getMarker()}</MapView>
   )
 
   const renderScene = SceneMap({
