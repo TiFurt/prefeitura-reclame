@@ -7,19 +7,23 @@ export default class ClaimService {
   claims = [
     {
       id: "21aa2ab5-5c2f-4876-b427-480eebcad81a",
-      name: "Claim 1",
+      name: "Lâmpada queimada",
       date: "2024-01-01",
-      description: "Descrição da reclamação",
+      description: "Lâmpada do poste da rua queimada",
       tags: [
-        { name: "Tag Test 1", color: "lightgreen" },
-        { name: "Tag Test 2", color: "lightgreen" },
+        { name: "Rua", color: "lightgreen" },
+        { name: "Poste", color: "lightgreen" },
       ],
     },
     {
       id: "9692c93c-6d5b-451b-a4e2-9f887a9cd074",
       date: "2024-01-01",
-      name: "Claim 5",
-      description: "Descrição da reclamação",
+      name: "Deslizamento de terra",
+      description: "Perigo de deslizamento de terra em cima da casa",
+      tags: [
+        { name: "Casa", color: "lightgreen" },
+        { name: "Morro", color: "lightgreen" },
+      ],
     },
   ];
 

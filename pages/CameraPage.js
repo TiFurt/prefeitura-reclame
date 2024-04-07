@@ -25,12 +25,10 @@ export default function CameraPage({ route, navigation }) {
   async function take() {
     if (ref) {
       const data = await ref.current.takePictureAsync({ base64: true, quality: 0.5 });
-      const { setCaptured, setBase64 } = route.params;
+      const { setBase64 } = route.params;
 
-      setCaptured(data.uri)
       setBase64(data.base64)
       navigation.goBack()
-      console.log(data)
     }
   }
 

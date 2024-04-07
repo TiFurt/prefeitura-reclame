@@ -8,7 +8,7 @@ import { routes } from "../routes";
 
 export default function HomePage({ route, navigation }) {
   const _getCards = (claims) => {
-    return claims.map((claim) => <CardComponent key={claim.id} claim={claim} />);
+    return claims.map((claim) => <CardComponent key={claim.id} claim={claim} navigation={navigation} />);
   };
 
   const [claims, setClaims] = useState(_getCards(route.params.claims));

@@ -12,6 +12,7 @@
     "@preact/signals-react": "^2.0.1",
     "@react-navigation/native": "^6.1.17",
     "@react-navigation/native-stack": "^6.9.26",
+    "date-fns": "^3.6.0",
     "expo": "~50.0.14",
     "expo-camera": "^14.1.1",
     "expo-local-authentication": "~13.8.0",

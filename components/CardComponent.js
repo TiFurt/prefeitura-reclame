@@ -1,18 +1,36 @@
-import { Text, View, StyleSheet } from "react-native";
+import { Text, View, StyleSheet, TouchableOpacity } from "react-native";
 import TagComponent from "./TagComponent";
+import { format } from "date-fns";
+import { routes } from "../routes";
 
-export default function CardComponent({ claim }) {
+export default function CardComponent({ claim, navigation }) {
 
   const tags = claim?.tags?.map((tag) => {
     return <TagComponent key={tag.name} tag={tag} />;
   });
 
+  const _editClaim = () => {
+    navigation.navigate(routes.CreateClaim, {
+      claim,
+    });
+  }
+
   return (
-    <View style={styles.card}>
-      <Text style={styles.title}>{claim.name}</Text>
-      <View style={styles.tags}>{tags}</View>
-      <Text style={styles.subtitle}>Data da reclamação: {new Date(claim.date).toLocaleDateString()}</Text>
-    </View>
+    <TouchableOpacity onPress={_editClaim}>
+      <View style={styles.card}>
+        <Text style={styles.title}>{claim.name}</Text>
+        <View style={styles.tags}>{tags}</View>
+        <Text style={styles.textContent}>
+          <Text style={styles.bold}>Ocorrência: </Text>
+          {format(new Date(claim.date), "dd/MM/yyy HH:mm:ss")}
+        </Text>
+
+        <View style={styles.descriptionContainer}>
+          <Text style={{ ...styles.textContent, ...styles.bold }}>Descrição:</Text>
+          <Text style={styles.description}>{claim.description}</Text>
+        </View>
+      </View>
+    </TouchableOpacity>
   );
 }
 
@@ -23,9 +41,10 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     padding: 10,
     borderRadius: 10,
+    gap: 5,
   },
   title: {
-    fontSize: 24,
+    fontSize: 20,
     fontWeight: "bold",
   },
   tags: {
@@ -33,65 +52,19 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     gap: 5,
   },
-  subtitle: {
-    fontSize: 18,
+  bold: {
+    fontWeight: "bold",
   },
-  container: {
-    flex: 1,
-    justifyContent: "center",
+  textContent: {
+    fontSize: 13,
   },
-  camera: {
+  description: {
+    fontSize: 11,
+  },
+  descriptionContainer: {
     width: "100%",
-    height: "100%",
-  },
-  buttonContainer: {
-    flex: 1,
-    backgroundColor: "transparent",
-    flexDirection: "row",
-  },
-  buttonFlip: {
-    position: "absolute",
-    bottom: 50,
-    left: 30,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#fff",
-    margin: 20,
-    width: 50,
-    height: 50,
-    borderRadius: 50,
-  },
-  buttonTake: {
-    position: "absolute",
-    bottom: 50,
-    right: 30,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#fff",
-    margin: 20,
-    width: 50,
-    height: 50,
-    borderRadius: 50,
-  },
-  contentPhoto: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    margin: 10,
-  },
-  img: {
-    width: "100%",
-    height: "80%",
-  },
-  buttonClose: {
-    position: "absolute",
-    top: 0,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#fff",
-    margin: 20,
-    width: 50,
-    height: 50,
-    borderRadius: 50,
+    padding: 5,
+    borderRadius: 5,
+    backgroundColor: "#f5f5f5",
   },
 });

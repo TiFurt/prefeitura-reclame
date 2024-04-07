@@ -20,7 +20,7 @@ export default function App() {
         <Stack.Screen name={routes.Register} component={RegisterPage} />
         <Stack.Screen name={routes.Home} component={HomePage} />
         <Stack.Screen name={routes.Map} component={MapPage} />
-        <Stack.Screen name={routes.CreateClaim} component={CreateClaimPage} options={{ title: "Criar Reclamação" }} />
+        <Stack.Screen name={routes.CreateClaim} component={CreateClaimPage} options={{ title: "Reclamação" }} />
         <Stack.Screen name={routes.Camera} component={CameraPage} options={{ title: "Câmera" }} />
       </Stack.Navigator>
     </NavigationContainer>

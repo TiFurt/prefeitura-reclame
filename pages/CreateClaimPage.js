@@ -7,24 +7,28 @@ import FloatingActionComponent from "../components/FloatingActionComponent";
 import { routes } from "../routes";
 import ClaimService from "../services/ClaimService";
 
-export default function CreateClaimPage({ navigation }) {
-  const claimService = ClaimService.getInstance();
+export default function CreateClaimPage({ route, navigation }) {
+  const { claim } = route?.params || {};
 
-  const [name, onChangeName] = useState("");
-  const [description, onChangeDescription] = useState("");
-  const [selectedTags, setSelectedTags] = useState([]);
-  const [captured, setCaptured] = useState(null);
-  const [base64, setBase64] = useState(null);
+  const [name, onChangeName] = useState(claim?.name || "");
+  const [description, onChangeDescription] = useState(claim?.description || "");
+  const [selectedTags, setSelectedTags] = useState(claim?.tags || []);
+  const [base64, setBase64] = useState(claim?.image || null);
 
-  const tags = claimService.getTags().map((tag) => {
+  const tags = ClaimService.getInstance().getTags().map((tag) => {
     return { name: tag.name, value: tag };
   });
 
   const _saveClaim = () => {
-    claimService.createClaim({
+    if (!name || !description || !selectedTags.length || !base64) {
+      return;
+    }
+
+    ClaimService.getInstance().createClaim({
       name,
       description,
       tags: selectedTags,
+      image: base64,
     });
     navigation.navigate(routes.Home, {
       claims: ClaimService.getInstance().claims,
@@ -33,13 +37,12 @@ export default function CreateClaimPage({ navigation }) {
 
   const _openCamera = () => {
     navigation.navigate(routes.Camera, {
-      setCaptured,
       setBase64,
     });
   }
 
   let cameraView = null;
-  if (captured) {
+  if (base64) {
     cameraView = (
       <Image style={styles.img} source={{ uri: 'data:image/png;base64,' + base64 }} />
     );
@@ -66,6 +69,7 @@ export default function CreateClaimPage({ navigation }) {
               onChangeText={onChangeDescription}
               value={description}
               placeholder="Descrição"
+              
             />
 
             <MultiSelect
@@ -92,10 +96,10 @@ export default function CreateClaimPage({ navigation }) {
               <TouchableOpacity
                 onPress={_openCamera}
                 style={styles.takePhotoButton}
-                title={captured ? "Tirar outra foto" : "Tirar foto"}
+                title={base64 ? "Tirar outra foto" : "Tirar foto"}
                 accessibilityLabel="Tirar foto"
               >
-                <Text style={{ color: "white" }}>{captured ? "Tirar outra foto" : "Tirar foto"}</Text>
+                <Text style={{ color: "white" }}>{base64 ? "Tirar outra foto" : "Tirar foto"}</Text>
                 <AntDesign style={styles.icon} color="white" name="camera" size={20} />
               </TouchableOpacity>
             </View>
