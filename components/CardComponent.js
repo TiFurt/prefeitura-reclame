@@ -9,14 +9,14 @@ export default function CardComponent({ claim, navigation }) {
     return <TagComponent key={tag.name} tag={tag} />;
   });
 
-  const _editClaim = () => {
-    navigation.navigate(routes.CreateClaim, {
+  const _viewClaim = () => {
+    navigation.navigate(routes.View, {
       claim,
     });
   }
 
   return (
-    <TouchableOpacity onPress={_editClaim}>
+    <TouchableOpacity onPress={_viewClaim}>
       <View style={styles.card}>
         <Text style={styles.title}>{claim.name}</Text>
         <View style={styles.tags}>{tags}</View>
