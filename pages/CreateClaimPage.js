@@ -48,15 +48,6 @@ export default function CreateClaimPage({ route, navigation }) {
     );
   }
 
-  const actions = [
-    {
-      text: "Create Claim",
-      icon: require("../assets/icons/plus-solid.png"),
-      name: "bt_add_claim",
-      textColor: "#1253bc",
-    },
-  ];
-
   return (
     <BasePage>
       <ScrollView contentContainerStyle={styles.scrollView}>
@@ -69,7 +60,7 @@ export default function CreateClaimPage({ route, navigation }) {
               onChangeText={onChangeDescription}
               value={description}
               placeholder="Descrição"
-              
+
             />
 
             <MultiSelect
