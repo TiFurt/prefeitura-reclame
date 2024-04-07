@@ -14,6 +14,11 @@ export default class ClaimService {
         { name: "Rua", color: "lightgreen" },
         { name: "Poste", color: "lightgreen" },
       ],
+      location: {
+        latitude: 37.422094,
+        longitude: -122.083922,
+        altitude: 0,
+      },
     },
     {
       id: "9692c93c-6d5b-451b-a4e2-9f887a9cd074",
@@ -24,6 +29,11 @@ export default class ClaimService {
         { name: "Casa", color: "lightgreen" },
         { name: "Morro", color: "lightgreen" },
       ],
+      location: {
+        latitude: -23.55052,
+        longitude: -46.633308,
+        altitude: 0,
+      },
     },
   ];
 

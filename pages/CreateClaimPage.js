@@ -1,5 +1,6 @@
 import { AntDesign, FontAwesome5 } from "@expo/vector-icons";
-import { useState } from "react";
+import { getCurrentPositionAsync, requestForegroundPermissionsAsync } from "expo-location";
+import { useEffect, useState } from "react";
 import { Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { MultiSelect } from "react-native-element-dropdown";
 import BasePage from "../components/BasePage";
@@ -14,13 +15,30 @@ export default function CreateClaimPage({ route, navigation }) {
   const [description, onChangeDescription] = useState(claim?.description || "");
   const [selectedTags, setSelectedTags] = useState(claim?.tags || []);
   const [base64, setBase64] = useState(claim?.image || null);
+  const [location, setLocation] = useState(null);
+  const [hasLocation, setHasLocation] = useState(false);
+
+  useEffect(() => {
+    (async () => {
+      let { status } = await requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        setHasLocation(false);
+        return;
+      }
+
+      setHasLocation(true);
+      let location = await getCurrentPositionAsync({});
+      const { latitude, longitude, altitude } = location.coords;
+      setLocation({ latitude, longitude, altitude });
+    })();
+  }, []);
 
   const tags = ClaimService.getInstance().getTags().map((tag) => {
     return { name: tag.name, value: tag };
   });
 
   const _saveClaim = () => {
-    if (!name || !description || !selectedTags.length || !base64) {
+    if (!name || !description || !selectedTags.length || !base64 || !location) {
       return;
     }
 
@@ -29,6 +47,7 @@ export default function CreateClaimPage({ route, navigation }) {
       description,
       tags: selectedTags,
       image: base64,
+      location,
     });
     navigation.navigate(routes.Home, {
       claims: ClaimService.getInstance().claims,
@@ -45,6 +64,14 @@ export default function CreateClaimPage({ route, navigation }) {
   if (base64) {
     cameraView = (
       <Image style={styles.img} source={{ uri: 'data:image/png;base64,' + base64 }} />
+    );
+  }
+
+  if (!hasLocation) {
+    return (
+      <BasePage>
+        <Text>Libere o uso da localização</Text>
+      </BasePage>
     );
   }
 
