@@ -3,8 +3,11 @@ import MapView, { Marker } from 'react-native-maps';
 import TagComponent from "../components/TagComponent";
 import { TabView, SceneMap } from 'react-native-tab-view';
 import { useState } from 'react';
+import FloatingActionComponent from "../components/FloatingActionComponent";
+import { AntDesign } from "@expo/vector-icons";
+import { routes as appRoutes } from "../routes";
 
-export default function ViewPage({ route }) {
+export default function ViewPage({ route, navigation }) {
   const { claim } = route?.params || {};
   const region = {
     latitude: claim?.location?.latitude || 0,
@@ -17,6 +20,11 @@ export default function ViewPage({ route }) {
     return <TagComponent key={tag.name} tag={tag} />;
   });
 
+  const _redirectToCreateClaimPage = () => {
+
+    navigation.navigate(appRoutes.CreateClaim, { claim });
+  };
+
   const infoTab = () => (
     <ScrollView style={styles.container} contentContainerStyle={{ flexGrow: 1 }}>
       <View style={styles.infoContainer}>
@@ -26,6 +34,13 @@ export default function ViewPage({ route }) {
           <Text>{claim.description}</Text>
         </View>
       </View>
+
+      <FloatingActionComponent
+        onPressItem={_redirectToCreateClaimPage}
+        title="Edit Claim" accessibilityLabel="Edit Claim"
+      >
+        <AntDesign color="white" name="edit" size={20} />
+      </FloatingActionComponent>
     </ScrollView>
   )
 
@@ -46,7 +61,6 @@ export default function ViewPage({ route }) {
     { key: 'map', title: 'Mapa' },
   ]);
 
-  console.log(claim);
   return (
     <TabView
       navigationState={{ index, routes }}
