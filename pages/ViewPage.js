@@ -1,11 +1,11 @@
-import { Text, View, StyleSheet, ScrollView, useWindowDimensions } from "react-native";
+import { Text, View, StyleSheet, ScrollView, useWindowDimensions, Image, Center } from "react-native";
 import MapView, { Marker } from 'react-native-maps';
 import TagComponent from "../components/TagComponent";
 import { TabView, SceneMap } from 'react-native-tab-view';
 import { useState } from 'react';
 import FloatingActionComponent from "../components/FloatingActionComponent";
 import { AntDesign } from "@expo/vector-icons";
-import { routes as appRoutes } from "../routes";
+import { routes } from "../routes";
 
 export default function ViewPage({ route, navigation }) {
   const { claim } = route?.params || {};
@@ -21,19 +21,20 @@ export default function ViewPage({ route, navigation }) {
   });
 
   const _redirectToCreateClaimPage = () => {
-
-    navigation.navigate(appRoutes.CreateClaim, { claim });
+    navigation.navigate(routes.CreateClaim, { claim });
   };
 
   const infoTab = () => (
     <ScrollView style={styles.container} contentContainerStyle={{ flexGrow: 1 }}>
-      <View style={styles.infoContainer}>
-        <Text style={styles.header}>{claim.name}</Text>
-        <View style={styles.tags}>{tags}</View>
-        <View style={styles.description}>
-          <Text>{claim.description}</Text>
-        </View>
+      <Text style={styles.header}>{claim.name}</Text>
+      <View style={styles.tags}>{tags}</View>
+      <View style={styles.description}>
+        <Text>{claim.description}</Text>
       </View>
+      {claim.image
+        ? <Image source={{ uri: `data:image/png;base64,${claim.image}` }} style={styles.image} />
+        : <View style={styles.noImage}><Text>Imagem não registrada</Text></View>
+      }
 
       <FloatingActionComponent
         onPressItem={_redirectToCreateClaimPage}
@@ -56,16 +57,17 @@ export default function ViewPage({ route, navigation }) {
   const layout = useWindowDimensions();
 
   const [index, setIndex] = useState(0);
-  const [routes] = useState([
+  const [tabRoutes] = useState([
     { key: 'info', title: 'Detalhes' },
     { key: 'map', title: 'Mapa' },
   ]);
 
   return (
     <TabView
-      navigationState={{ index, routes }}
+      navigationState={{ index, routes: tabRoutes }}
       renderScene={renderScene}
       onIndexChange={setIndex}
+      swipeEnabled={false}
       initialLayout={{ width: layout.width }}
     />
   );
@@ -75,8 +77,6 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: "#fff",
     height: "100vh",
-  },
-  infoContainer: {
     padding: 10,
   },
   map: {
@@ -93,11 +93,22 @@ const styles = StyleSheet.create({
     padding: 5,
     borderRadius: 5,
     backgroundColor: "#f5f5f5",
+    marginBottom: 10,
   },
   tags: {
     display: "flex",
     flexDirection: "row",
     gap: 5,
     marginBottom: 10,
+  },
+  image: {
+    width: "100%",
+    height: "100%",
+    borderRadius: 5,
+  },
+  noImage: {
+    width: "100%",
+    display: "flex",
+    justifyContent: "center",
   }
 });
