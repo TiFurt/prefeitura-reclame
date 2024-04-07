@@ -25,7 +25,7 @@ export default function ViewPage({ route, navigation }) {
   };
 
   const infoTab = () => (
-    <ScrollView style={styles.container} contentContainerStyle={{ flexGrow: 1 }}>
+    <ScrollView style={styles.container}>
       <Text style={styles.header}>{claim.name}</Text>
       <View style={styles.tags}>{tags}</View>
       <View style={styles.description}>
@@ -84,7 +84,6 @@ export default function ViewPage({ route, navigation }) {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: "#fff",
-    height: "100vh",
     padding: 10,
   },
   map: {
@@ -111,7 +110,7 @@ const styles = StyleSheet.create({
   },
   image: {
     width: "100%",
-    height: "100%",
+    height: 500,
     borderRadius: 5,
   },
   noImage: {
