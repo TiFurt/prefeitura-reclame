@@ -42,7 +42,7 @@ export default function CreateClaimPage({ route, navigation }) {
       return;
     }
 
-    if (claim.id) {
+    if (claim?.id) {
       ClaimService.getInstance().updateClaim({
         id: claim.id,
         name,
@@ -78,7 +78,7 @@ export default function CreateClaimPage({ route, navigation }) {
   let cameraView = null;
   if (base64) {
     cameraView = (
-      <Image style={styles.img} source={{ uri: 'data:image/png;base64,' + base64 }} />
+      <Image style={styles.img} source={{ uri: `data:image/png;base64,${base64}` }} />
     );
   }
 
@@ -156,7 +156,6 @@ export default function CreateClaimPage({ route, navigation }) {
 styles = StyleSheet.create({
   scrollView: {
     width: "100%",
-    height: "100%",
   },
   container: {
     height: "100%",
@@ -227,6 +226,6 @@ styles = StyleSheet.create({
   },
   img: {
     width: "100%",
-    height: "100%",
+    height: 500
   },
 });
