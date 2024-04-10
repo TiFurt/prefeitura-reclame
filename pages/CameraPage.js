@@ -1,32 +1,39 @@
 import { AntDesign } from "@expo/vector-icons";
-import { Camera, CameraType } from 'expo-camera';
+import { Camera, PermissionStatus as CameraPermissionStatus, CameraType } from 'expo-camera';
+import { PermissionStatus as LocationPermissionStatus, getCurrentPositionAsync, requestForegroundPermissionsAsync } from "expo-location";
 import { useEffect, useRef, useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { v4 as uuidv4 } from "uuid";
+
 export default function CameraPage({ route, navigation }) {
   const ref = useRef(null);
   const [hasPermission, setHasPermission] = useState(null);
   const [type, setType] = useState(CameraType.back);
+  const [hasLocation, setHasLocation] = useState(false);
 
   useEffect(() => {
     (async () => {
-      const { status } = await Camera.requestCameraPermissionsAsync();
-      setHasPermission(status === 'granted');
+      const cameraPermission = await Camera.requestCameraPermissionsAsync();
+      const locationPermission = await requestForegroundPermissionsAsync();
+
+      setHasPermission(cameraPermission.status === CameraPermissionStatus.GRANTED);
+      setHasLocation(locationPermission.status === LocationPermissionStatus.GRANTED);
     })();
   }, []);
 
-  if (hasPermission === null) {
-    return <View />;
-  }
-  if (hasPermission === false) {
-    return <Text>Libere o uso da câmera</Text>;
+  if (!hasPermission || !hasLocation) {
+    return <Text>Libere o uso da câmera e da localização para continuar</Text>;
   }
 
   async function take() {
     if (ref) {
+      const currentLocation = await getCurrentPositionAsync({});
       const picture = await ref.current.takePictureAsync({ base64: true, quality: 0.5 });
-      const { setPhoto } = route.params;
+      const { setPhoto, setLocation } = route.params;
 
-      setPhoto(picture)
+      const { latitude, longitude, altitude } = currentLocation.coords;
+      setLocation({ latitude, longitude, altitude });
+      setPhoto({ id: uuidv4(), ...picture })
       navigation.goBack()
     }
   }

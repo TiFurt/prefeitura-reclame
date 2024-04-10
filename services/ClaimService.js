@@ -64,12 +64,12 @@ export default class ClaimService {
     this.claims = [...this.claims, { id: uuidv4(), date: new Date(), ...claim }];
   }
 
-  updateClaim(claim) {
-    this.claims = this.claims.map((c) => {
-      if (c.id === claim.id) {
-        return { ...c, ...claim };
+  updateClaim(claimToSave) {
+    this.claims = this.claims.map((claim) => {
+      if (claim.id === claimToSave.id) {
+        return { ...claim, ...claimToSave };
       }
-      return c;
+      return claim;
     });
   }
 }

@@ -40,7 +40,7 @@ export default function ViewPage({ route, navigation }) {
           </View>
         </View>
         {claim.image
-          ? <Image source={{ uri: `data:image/png;base64,${claim.image}` }} style={styles.image} />
+          ? <Image source={{ uri: `data:image/png;base64,${claim.image.base64}` }} style={styles.image} />
           : <View style={styles.noImage}><Text>Imagem não registrada</Text></View>
         }
       </ScrollView>

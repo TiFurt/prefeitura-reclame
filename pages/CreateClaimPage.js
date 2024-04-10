@@ -1,6 +1,5 @@
 import { AntDesign, FontAwesome5 } from "@expo/vector-icons";
-import { PermissionStatus, getCurrentPositionAsync, requestForegroundPermissionsAsync } from "expo-location";
-import { requestPermissionsAsync, saveToLibraryAsync } from 'expo-media-library';
+import { requestPermissionsAsync, saveToLibraryAsync, PermissionStatus } from 'expo-media-library';
 import { useEffect, useState } from "react";
 import { Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { MultiSelect } from "react-native-element-dropdown";
@@ -18,22 +17,13 @@ export default function CreateClaimPage({ route, navigation }) {
   const [selectedTags, setSelectedTags] = useState(claim?.tags || []);
   const [photo, setPhoto] = useState(claim?.image || null);
   const [location, setLocation] = useState(null);
-  const [hasLocation, setHasLocation] = useState(false);
   const [hasMediaLibraryPermission, setHasMediaLibraryPermission] = useState();
 
   useEffect(() => {
     (async () => {
-      const locationPermission = await requestForegroundPermissionsAsync();
       const mediaLibraryPermission = await requestPermissionsAsync();
 
-      setHasLocation(locationPermission.status === PermissionStatus.GRANTED);
       setHasMediaLibraryPermission(mediaLibraryPermission.status === PermissionStatus.GRANTED);
-
-      if (locationPermission.status === PermissionStatus.GRANTED) {
-        let location = await getCurrentPositionAsync({});
-        const { latitude, longitude, altitude } = location.coords;
-        setLocation({ latitude, longitude, altitude });
-      }
     })();
   }, []);
 
@@ -42,6 +32,10 @@ export default function CreateClaimPage({ route, navigation }) {
   });
 
   const _savePhotoOnGallery = () => {
+    if (claim?.image?.id === photo?.id || !photo?.uri) {
+      return;
+    }
+
     saveToLibraryAsync(photo.uri)
   };
 
@@ -54,7 +48,7 @@ export default function CreateClaimPage({ route, navigation }) {
         name,
         description,
         tags: selectedTags,
-        image: photo.base64,
+        image: photo,
         location,
       });
       navigation.navigate(routes.View, {
@@ -67,7 +61,7 @@ export default function CreateClaimPage({ route, navigation }) {
       name,
       description,
       tags: selectedTags,
-      image: photo.base64,
+      image: photo,
       location,
     });
     navigation.navigate(routes.Home, {
@@ -78,24 +72,18 @@ export default function CreateClaimPage({ route, navigation }) {
   const _openCamera = () => {
     navigation.navigate(routes.Camera, {
       setPhoto,
+      setLocation,
     });
   }
 
   let cameraView = null;
-  if (photo?.base64) {
+  if (photo) {
     cameraView = (
       <Image style={styles.img} source={{ uri: `data:image/png;base64,${photo.base64}` }} />
     );
   }
 
-  if (!hasLocation) {
-    return (
-      <BasePage>
-        <Text>Libere o uso da localização</Text>
-      </BasePage>
-    );
-  }
-  else if (!hasMediaLibraryPermission) {
+  if (!hasMediaLibraryPermission) {
     return (
       <BasePage>
         <Text>Libere o uso da galeria</Text>
