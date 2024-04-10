@@ -1,4 +1,5 @@
 import { AntDesign } from "@expo/vector-icons";
+import { format } from "date-fns";
 import { useState } from 'react';
 import { Image, ScrollView, StyleSheet, Text, View, useWindowDimensions } from "react-native";
 import MapView, { Marker } from 'react-native-maps';
@@ -29,8 +30,14 @@ export default function ViewPage({ route, navigation }) {
       <ScrollView contentContainerStyle={styles.scrollView}>
         <Text style={styles.header}>{claim.name}</Text>
         <View style={styles.tags}>{tags}</View>
-        <View style={styles.description}>
-          <Text>{claim.description}</Text>
+        <View style={styles.textContainer}>
+          <Text style={styles.textContent}>
+            <Text style={styles.bold}>Ocorrência: </Text>
+            {format(new Date(claim.date), "dd/MM/yyy HH:mm:ss")}
+          </Text>
+          <View style={styles.description}>
+            <Text>{claim.description}</Text>
+          </View>
         </View>
         {claim.image
           ? <Image source={{ uri: `data:image/png;base64,${claim.image}` }} style={styles.image} />
@@ -99,7 +106,7 @@ const styles = StyleSheet.create({
   header: {
     fontSize: 20,
     fontWeight: "bold",
-    marginBottom: 10,
+    marginBottom: 5,
   },
   description: {
     width: "100%",
@@ -123,5 +130,14 @@ const styles = StyleSheet.create({
     width: "100%",
     display: "flex",
     justifyContent: "center",
-  }
+  },
+  bold: {
+    fontWeight: "bold",
+  },
+  textContent: {
+    fontSize: 13,
+  },
+  textContainer: {
+    gap: 5,
+  },
 });
