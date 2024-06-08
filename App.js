@@ -16,12 +16,12 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName={routes.Welcome}>
-        <Stack.Screen name={routes.Welcome} component={WelcomePage} />
-        <Stack.Screen name={routes.Login} component={LoginPage} />
-        <Stack.Screen name={routes.Register} component={RegisterPage} />
-        <Stack.Screen name={routes.Home} component={HomePage} />
-        <Stack.Screen name={routes.View} component={ViewPage} />
-        <Stack.Screen name={routes.Map} component={MapPage} />
+        <Stack.Screen name={routes.Welcome} component={WelcomePage} options={{ title: "Bem Vindo" }} />
+        <Stack.Screen name={routes.Login} component={LoginPage} options={{ title: "Login" }} />
+        <Stack.Screen name={routes.Register} component={RegisterPage} options={{ title: "Criar Conta" }} />
+        <Stack.Screen name={routes.Home} component={HomePage} options={{ title: "Início" }} />
+        <Stack.Screen name={routes.View} component={ViewPage} options={{ title: "Visualizar Relamação" }} />
+        <Stack.Screen name={routes.Map} component={MapPage} options={{ title: "Mapa" }} />
         <Stack.Screen name={routes.CreateClaim} component={CreateClaimPage} options={{ title: "Reclamação" }} />
         <Stack.Screen name={routes.Camera} component={CameraPage} options={{ title: "Câmera" }} />
       </Stack.Navigator>

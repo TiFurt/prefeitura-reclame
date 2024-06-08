@@ -4,7 +4,7 @@ import BasePage from '../components/BasePage';
 export default function RegisterPage() {
   return (
     <BasePage>
-      <Text>Register Page</Text>
+      <Text>Criar Conta</Text>
     </BasePage>
   );
 }

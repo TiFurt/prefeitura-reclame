@@ -27,7 +27,7 @@ export default function HomePage({ route, navigation }) {
 
       <FloatingActionComponent
         onPressItem={_redirectToCreateClaimPage}
-        title="Create Claim" accessibilityLabel="Create Claim"
+        title="Criar Reclamação" accessibilityLabel="Criar Reclamação"
       >
         <AntDesign color="white" name="plus" size={20} />
       </FloatingActionComponent>

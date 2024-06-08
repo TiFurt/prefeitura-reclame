@@ -36,7 +36,7 @@ export default function LoginPage({ navigation }) {
 
   return (
     <BasePage>
-      <Text>Login Page</Text>
+      <Text>Login</Text>
       <Text>TODO: Adicionar login e senha</Text>
       {!biometry && <Text>Seu dispositivo não tem suporte para biometria.</Text>}
     </BasePage>

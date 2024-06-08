@@ -47,7 +47,7 @@ export default function ViewPage({ route, navigation }) {
 
       <FloatingActionComponent
         onPressItem={_redirectToCreateClaimPage}
-        title="Edit Claim" accessibilityLabel="Edit Claim"
+        title="Editar Reclamação" accessibilityLabel="Editar Reclamação"
       >
         <AntDesign color="white" name="edit" size={20} />
       </FloatingActionComponent>

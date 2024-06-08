@@ -15,9 +15,9 @@ export default function WelcomePage({ navigation }) {
   return (
     <BasePage>
       <View style={styles.container}>
-        <Text>Welcome Page</Text>
+        <Text>Bem Vindo</Text>
         <Button title='Login' onPress={_goToLogin}></Button>
-        <Button title='Register' onPress={_goToRegister}></Button>
+        <Button title='Criar Conta' onPress={_goToRegister}></Button>
       </View>
     </BasePage>
   );

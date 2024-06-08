@@ -114,7 +114,7 @@ export default function CreateClaimPage({ route, navigation }) {
               labelField="name"
               valueField="value"
               placeholder="Categorias"
-              searchPlaceholder="Search..."
+              searchPlaceholder="Buscar..."
               value={selectedTags}
               onChange={(item) => {
                 setSelectedTags(item);

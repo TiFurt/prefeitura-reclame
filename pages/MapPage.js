@@ -5,7 +5,7 @@ export default function MapPage() {
 
   return (
     <BasePage>
-      <Text>Map Page</Text>
+      <Text>Mapa</Text>
     </BasePage>
   );
 }
