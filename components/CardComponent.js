@@ -6,7 +6,7 @@ import { routes } from "../routes";
 export default function CardComponent({ claim, navigation }) {
 
   const tags = claim?.tags?.map((tag) => {
-    return <TagComponent key={tag.name} tag={tag} />;
+    return <TagComponent key={tag.id} tag={tag} />;
   });
 
   const _viewClaim = () => {
