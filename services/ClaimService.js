@@ -1,52 +1,13 @@
 import "react-native-get-random-values";
 import { db } from "../firebaseConfig";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, doc, setDoc, getDoc, getDocs, serverTimestamp, updateDoc } from "firebase/firestore";
 import { v4 as uuidv4 } from "uuid";
 
 export default class ClaimService {
   static instance = null;
 
   _claimsRef = collection(db, "claims");
-
-  tags = [
-    { name: "Rua", color: "lightgreen" },
-    { name: "Poste", color: "lightgreen" },
-    { name: "Casa", color: "lightgreen" },
-    { name: "Morro", color: "lightgreen" },
-  ];
-
-  claims = [
-    {
-      id: "21aa2ab5-5c2f-4876-b427-480eebcad81a",
-      name: "Lâmpada queimada",
-      date: "2024-01-01",
-      description: "Lâmpada do poste da rua queimada",
-      tags: [
-        this.tags[0],
-        this.tags[1],
-      ],
-      location: {
-        latitude: 37.422094,
-        longitude: -122.083922,
-        altitude: 0,
-      },
-    },
-    {
-      id: "9692c93c-6d5b-451b-a4e2-9f887a9cd074",
-      date: "2024-01-01",
-      name: "Deslizamento de terra",
-      description: "Perigo de deslizamento de terra em cima da casa",
-      tags: [
-        this.tags[2],
-        this.tags[3],
-      ],
-      location: {
-        latitude: -23.55052,
-        longitude: -46.633308,
-        altitude: 0,
-      },
-    },
-  ];
+  _tagsRef = collection(db, "tags");
 
   static getInstance() {
     if (ClaimService.instance == null) {
@@ -56,30 +17,49 @@ export default class ClaimService {
     return ClaimService.instance;
   }
 
-  getTags() {
-    return this.tags;
+  async getTags() {
+    const querySnapshot = await getDocs(this._tagsRef);
+    return querySnapshot.docs.map((doc) => ({ ...doc.data() }));
   }
 
   async getClaims() {
     const querySnapshot = await getDocs(this._claimsRef);
-    return querySnapshot.docs.map((doc) => ({ ...doc.data(), date: doc.data().date.toDate() }));
-    // return this.claims;
+    
+    return await Promise.all(querySnapshot.docs.map(async (doc) => {
+      const data = doc.data();
+      const date = data.date.toDate();
+      
+      const tags = data.tags?.length ? await Promise.all(data.tags.map(async (tagRef) => {
+        const tagDoc = await getDoc(tagRef);
+        return tagDoc.data();
+      })) : [];
+      
+      return {
+        ...data,
+        date,
+        tags
+      };
+    }));
   }
 
-  getClaimById(id) {
-    return this.claims.find((claim) => claim.id === id);
+  async createClaim(claim) {
+    const id = uuidv4();
+    const tags = claim.tags?.map((tag) => doc(db, "tags", tag)) || [];
+    const newClaim = {
+      id,
+      date: serverTimestamp(),
+      ...claim,
+      tags
+    };
+    await setDoc(doc(db, "claims", id), newClaim);
   }
 
-  createClaim(claim) {
-    this.claims = [...this.claims, { id: uuidv4(), date: new Date(), ...claim }];
-  }
-
-  updateClaim(claimToSave) {
-    this.claims = this.claims.map((claim) => {
-      if (claim.id === claimToSave.id) {
-        return { ...claim, ...claimToSave };
-      }
-      return claim;
-    });
+  async updateClaim(claimToSave) {
+    const tags = claimToSave.tags?.map((tag) => doc(db, "tags", tag)) || [];
+    const updatedClaim = {
+      ...claimToSave,
+      tags: tags
+    };
+    await updateDoc(doc(db, "claims", claimToSave.id), updatedClaim);
   }
 }

@@ -14,10 +14,21 @@ export default function CreateClaimPage({ route, navigation }) {
 
   const [name, onChangeName] = useState(claim?.name || "");
   const [description, onChangeDescription] = useState(claim?.description || "");
-  const [selectedTags, setSelectedTags] = useState(claim?.tags || []);
+  const [selectedTags, setSelectedTags] = useState(claim?.tags?.map((tag) => tag.id) || []);
   const [photo, setPhoto] = useState(claim?.image || null);
   const [location, setLocation] = useState(null);
   const [hasMediaLibraryPermission, setHasMediaLibraryPermission] = useState();
+  const [tags, setTags] = useState([]);
+
+  const fetchTags = async () => {
+    try {
+      const tags = await ClaimService.getInstance().getTags();
+      setTags(tags);
+    } catch (error) {
+      console.error('Error fetching tags:', error);
+    }
+  };
+
 
   useEffect(() => {
     (async () => {
@@ -25,11 +36,9 @@ export default function CreateClaimPage({ route, navigation }) {
 
       setHasMediaLibraryPermission(mediaLibraryPermission.status === PermissionStatus.GRANTED);
     })();
-  }, []);
 
-  const tags = ClaimService.getInstance().getTags().map((tag) => {
-    return { name: tag.name, value: tag };
-  });
+    fetchTags();
+  }, []);
 
   const _savePhotoOnGallery = () => {
     if (claim?.image?.id === photo?.id || !photo?.uri) {
@@ -39,11 +48,11 @@ export default function CreateClaimPage({ route, navigation }) {
     saveToLibraryAsync(photo.uri)
   };
 
-  const _saveClaim = () => {
+  const _saveClaim = async () => {
     _savePhotoOnGallery();
 
     if (claim?.id) {
-      ClaimService.getInstance().updateClaim({
+      await ClaimService.getInstance().updateClaim({
         id: claim.id,
         name,
         description,
@@ -52,7 +61,7 @@ export default function CreateClaimPage({ route, navigation }) {
         location,
       });
     } else {
-      ClaimService.getInstance().createClaim({
+      await ClaimService.getInstance().createClaim({
         name,
         description,
         tags: selectedTags,
@@ -112,12 +121,12 @@ export default function CreateClaimPage({ route, navigation }) {
               search
               data={tags}
               labelField="name"
-              valueField="value"
+              valueField="id"
               placeholder="Categorias"
               searchPlaceholder="Buscar..."
               value={selectedTags}
-              onChange={(item) => {
-                setSelectedTags(item);
+              onChange={(items) => {
+                setSelectedTags(items);
               }}
               renderLeftIcon={() => <AntDesign style={styles.icon} color="black" name="tags" size={20} />}
               selectedStyle={styles.selectedStyle}

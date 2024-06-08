@@ -31,8 +31,8 @@ export default function CameraPage({ route, navigation }) {
       const picture = await ref.current.takePictureAsync({ base64: true, quality: 0.5 });
       const { setPhoto, setLocation } = route.params;
 
-      const { latitude, longitude, altitude } = currentLocation.coords;
-      setLocation({ latitude, longitude, altitude });
+      const { latitude, longitude } = currentLocation.coords;
+      setLocation({ latitude, longitude });
       setPhoto({ id: uuidv4(), ...picture })
       navigation.goBack()
     }
