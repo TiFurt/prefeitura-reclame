@@ -4,7 +4,6 @@ import { Text } from "react-native";
 import BasePage from "../components/BasePage";
 import { routes } from "../routes";
 import AuthService from "../services/AuthService";
-import ClaimService from "../services/ClaimService";
 
 export default function LoginPage({ navigation }) {
   const [biometry, setBiometry] = useState(false);
@@ -16,9 +15,7 @@ export default function LoginPage({ navigation }) {
     }
 
     AuthService.getInstance().login();
-    navigation.navigate(routes.Home, {
-      claims: ClaimService.getInstance().claims,
-    });
+    navigation.navigate(routes.Home);
   };
 
   hasBiometryHardware = async () => {

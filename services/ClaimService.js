@@ -1,8 +1,12 @@
 import "react-native-get-random-values";
+import { db } from "../firebaseConfig";
+import { collection, getDocs } from "firebase/firestore";
 import { v4 as uuidv4 } from "uuid";
 
 export default class ClaimService {
   static instance = null;
+
+  _claimsRef = collection(db, "claims");
 
   tags = [
     { name: "Rua", color: "lightgreen" },
@@ -54,6 +58,12 @@ export default class ClaimService {
 
   getTags() {
     return this.tags;
+  }
+
+  async getClaims() {
+    const querySnapshot = await getDocs(this._claimsRef);
+    return querySnapshot.docs.map((doc) => ({ ...doc.data(), date: doc.data().date.toDate() }));
+    // return this.claims;
   }
 
   getClaimById(id) {

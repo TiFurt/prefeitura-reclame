@@ -5,29 +5,47 @@ import BasePage from "../components/BasePage";
 import CardComponent from "../components/CardComponent";
 import FloatingActionComponent from "../components/FloatingActionComponent";
 import { routes } from "../routes";
+import ClaimService from '../services/ClaimService';
+import { useIsFocused } from '@react-navigation/native';
 
-export default function HomePage({ route, navigation }) {
+export default function HomePage({ navigation }) {
+  const [claims, setClaims] = useState([]);
+  const isFocused = useIsFocused();
+
   const _getCards = (claims) => {
-    return claims.map((claim) => <CardComponent key={claim.id} claim={claim} navigation={navigation} />);
+    return claims.map((claim) => (
+      <CardComponent key={claim.id} claim={claim} navigation={navigation} />
+    ));
   };
-
-  const [claims, setClaims] = useState(_getCards(route.params.claims));
 
   const _redirectToCreateClaimPage = () => {
     navigation.navigate(routes.CreateClaim);
   };
 
+  const fetchClaims = async () => {
+    try {
+      const claimData = await ClaimService.getInstance().getClaims();
+      setClaims(_getCards(claimData));
+    } catch (error) {
+      console.error('Error fetching claims:', error);
+    }
+  };
+
   useEffect(() => {
-    setClaims(_getCards(route.params.claims));
-  }, [route.params.claims]);
+    if (isFocused) {
+      fetchClaims();
+    }
+  }, [isFocused]);
 
   return (
     <BasePage>
-      <ScrollView contentContainerStyle={styles.scrollView}>{claims}</ScrollView>
-
+      <ScrollView contentContainerStyle={styles.scrollView}>
+        {claims}
+      </ScrollView>
       <FloatingActionComponent
         onPressItem={_redirectToCreateClaimPage}
-        title="Criar Reclamação" accessibilityLabel="Criar Reclamação"
+        title="Criar Reclamação"
+        accessibilityLabel="Criar Reclamação"
       >
         <AntDesign color="white" name="plus" size={20} />
       </FloatingActionComponent>
