@@ -33,6 +33,16 @@ export default function LoginPage({ navigation }) {
   };
 
   login = async () => {
+    if (!email) {
+      setValidation('E-mail é obrigatório');
+      return;
+    }
+
+    if (!password) {
+      setValidation('Senha é obrigatória');
+      return;
+    }
+
     const auth = getAuth();
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
