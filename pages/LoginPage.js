@@ -2,6 +2,7 @@ import { authenticateAsync, hasHardwareAsync } from "expo-local-authentication";
 import { FontAwesome5 } from "@expo/vector-icons";
 import React, { useEffect, useState } from "react";
 import { Text, TextInput, TouchableOpacity, StyleSheet } from "react-native";
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import BasePage from "../components/BasePage";
 import { routes } from "../routes";
 import AuthService from "../services/AuthService";
@@ -19,9 +20,7 @@ export default function LoginPage({ navigation }) {
       return;
     }
 
-    AuthService.getInstance().login();
-    navigation.popToTop();
-    navigation.replace(routes.Home);
+    redirectToHome()
   };
 
   hasBiometryHardware = async () => {
@@ -34,7 +33,22 @@ export default function LoginPage({ navigation }) {
   };
 
   login = async () => {
-    console.log('login');
+    const auth = getAuth();
+    signInWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        if (userCredential) {
+          redirectToHome();
+        }
+      })
+      .catch((error) => {
+        setValidation('E-mail ou senha inválidos');
+      });
+  }
+
+  redirectToHome = () => {
+    AuthService.getInstance().login();
+    navigation.popToTop();
+    navigation.replace(routes.Home);
   }
 
   useEffect(() => {
