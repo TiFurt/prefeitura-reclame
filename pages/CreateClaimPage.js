@@ -109,7 +109,6 @@ export default function CreateClaimPage({ route, navigation }) {
               onChangeText={onChangeDescription}
               value={description}
               placeholder="Descrição"
-
             />
 
             <MultiSelect
