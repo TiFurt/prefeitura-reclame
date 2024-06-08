@@ -19,6 +19,7 @@
     "expo-location": "^16.5.5",
     "expo-media-library": "^15.9.1",
     "expo-status-bar": "~1.11.1",
+    "firebase": "^10.12.2",
     "react": "18.2.0",
     "react-native": "0.73.6",
     "react-native-element-dropdown": "^2.10.4",
