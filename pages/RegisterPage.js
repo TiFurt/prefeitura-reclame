@@ -1,16 +1,59 @@
 import { FontAwesome5 } from "@expo/vector-icons";
 import { Text, TextInput, TouchableOpacity, StyleSheet } from "react-native";
 import React, { useState } from "react";
+import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import { routes } from "../routes";
 import BasePage from '../components/BasePage';
+import AuthService from "../services/AuthService";
 
-export default function RegisterPage() {
+export default function RegisterPage({ navigation }) {
   const [validation, setValidation] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confPassword, setConfPassword] = useState('');
 
   createAccount = async () => {
-    console.log('Create account');
+    if (!email) {
+      setValidation('E-mail é obrigatório');
+      return;
+    }
+
+    if (!password) {
+      setValidation('Senha é obrigatória');
+      return;
+    }
+
+    if (password !== confPassword) {
+      setValidation('Senhas não conferem');
+      return;
+    }
+
+    const auth = getAuth();
+    createUserWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        if (userCredential) {
+          redirectToHome();
+        }
+      })
+      .catch(({ code }) => {
+        if (code === 'auth/email-already-in-use') {
+          setValidation('E-mail já cadastrado');
+          return;
+        }
+
+        if (code === 'auth/weak-password') {
+          setValidation('Senha fraca');
+          return;
+        }
+
+        setValidation('Erro ao criar conta');
+      });
+  }
+
+  redirectToHome = () => {
+    AuthService.getInstance().login();
+    navigation.popToTop();
+    navigation.replace(routes.Home);
   }
 
   return (
