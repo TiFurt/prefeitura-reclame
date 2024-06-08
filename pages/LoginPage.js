@@ -16,7 +16,8 @@ export default function LoginPage({ navigation }) {
     }
 
     AuthService.getInstance().login();
-    navigation.navigate(routes.Home, {
+    navigation.popToTop();
+    navigation.replace(routes.Home, {
       claims: ClaimService.getInstance().claims,
     });
   };
