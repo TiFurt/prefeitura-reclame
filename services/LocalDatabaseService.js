@@ -33,41 +33,24 @@ export default class LocalDatabaseService {
 
   saveClaims(claims) {
     this.db.transaction(tx => {
-      // claims.forEach(claim => {
-      //   tx.executeSql(`
-      //     INSERT INTO claims (id, date, description, image, latitude, longitude, name, tags, user)
-      //     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
-      //   `, [
-      //     claim.id,
-      //     claim.date,
-      //     claim.description,
-      //     claim.image,
-      //     claim.latitude,
-      //     claim.longitude,
-      //     claim.name,
-      //     JSON.stringify(claim.tags),
-      //     claim.userId
-      //   ],
-      //     (_, result) => console.log(result),
-      //     (_, error) => console.log(error));
-      // });
-
-      tx.executeSql(`
-        INSERT INTO claims (id, date, description, image, latitude, longitude, name, tags, user)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
-      `, [
-        claims[0].id,
-        claims[0].date,
-        claims[0].description,
-        claims[0].image,
-        claims[0].latitude,
-        claims[0].longitude,
-        claims[0].name,
-        JSON.stringify(claims[0].tags),
-        claims[0].userId
-      ],
-        (_, result) => console.log(result),
-        (_, error) => console.log(error));
+      claims.forEach(claim => {
+        tx.executeSql(`
+          INSERT INTO claims (id, date, description, image, latitude, longitude, name, tags, user)
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
+        `, [
+          claim.id,
+          claim.date,
+          claim.description,
+          claim.image,
+          claim.latitude,
+          claim.longitude,
+          claim.name,
+          JSON.stringify(claim.tags),
+          claim.userId
+        ],
+          (_, result) => console.log(result),
+          (_, error) => console.log(error));
+      });
     });
   }
 }
