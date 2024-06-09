@@ -50,8 +50,40 @@ export default function LoginPage({ navigation }) {
           redirectToHome();
         }
       })
-      .catch((error) => {
+      .catch(({ code }) => {
         setValidation('E-mail ou senha inválidos');
+
+        if (code === 'auth/user-not-found') {
+          setValidation('Usuário não encontrado');
+          return;
+        }
+
+        if (code === 'auth/wrong-password') {
+          setValidation('Senha inválida');
+          return;
+        }
+
+        if (code === 'auth/invalid-email') {
+          setValidation('E-mail inválido');
+          return;
+        }
+
+        if (code === 'auth/too-many-requests') {
+          setValidation('Muitas tentativas. Tente novamente mais tarde');
+          return;
+        }
+
+        if (code === 'auth/user-disabled') {
+          setValidation('Usuário desabilitado');
+          return;
+        }
+
+        if (code === 'auth/network-request-failed') {
+          setValidation('Falha na conexão. Verifique sua conexão com a internet');
+          return;
+        }
+
+        setValidation('Erro desconhecido. Tente novamente mais tarde');
       });
   }
 
