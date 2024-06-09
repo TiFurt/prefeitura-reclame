@@ -12,7 +12,7 @@ export default function HomePage({ navigation }) {
   const [claims, setClaims] = useState([]);
   const isFocused = useIsFocused();
 
-  const _getCards = (claims) => {
+  const _listClaims = () => {
     return claims.map((claim) => (
       <CardComponent key={claim.id} claim={claim} navigation={navigation} />
     ));
@@ -25,7 +25,7 @@ export default function HomePage({ navigation }) {
   const fetchClaims = async () => {
     try {
       const claimData = await ClaimService.getInstance().getClaims();
-      setClaims(_getCards(claimData));
+      setClaims(claimData);
     } catch (error) {
       console.error('Error fetching claims:', error);
     }
@@ -40,7 +40,7 @@ export default function HomePage({ navigation }) {
   return (
     <BasePage>
       <ScrollView contentContainerStyle={styles.scrollView}>
-        {claims}
+        {_listClaims()}
       </ScrollView>
       <FloatingActionComponent
         onPressItem={_redirectToCreateClaimPage}

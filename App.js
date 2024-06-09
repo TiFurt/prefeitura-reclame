@@ -1,5 +1,6 @@
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import React, { useEffect } from 'react';
 import CreateClaimPage from "./pages/CreateClaimPage";
 import HomePage from "./pages/HomePage";
 import ViewPage from "./pages/ViewPage";
@@ -9,10 +10,15 @@ import RegisterPage from "./pages/RegisterPage";
 import WelcomePage from "./pages/WelcomePage";
 import { routes } from "./routes";
 import CameraPage from "./pages/CameraPage";
+import LocalDatabaseService from "./services/LocalDatabaseService";
 
 const Stack = createNativeStackNavigator();
 
 export default function App() {
+  useEffect(() => {
+    LocalDatabaseService.getInstance().initDb();
+  }, []);
+
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName={routes.Welcome}>

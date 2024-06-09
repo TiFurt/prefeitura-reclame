@@ -22,7 +22,7 @@ export default function CardComponent({ claim, navigation }) {
         <View style={styles.tags}>{tags}</View>
         <Text style={styles.textContent}>
           <Text style={styles.bold}>Ocorrência: </Text>
-          {format(new Date(claim.date), "dd/MM/yyy HH:mm:ss")}
+          {format(claim.date, "dd/MM/yyy HH:mm:ss")}
         </Text>
 
         <View style={styles.descriptionContainer}>

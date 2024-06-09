@@ -2,6 +2,7 @@ import { collection, doc, getDoc, getDocs, query, serverTimestamp, setDoc, updat
 import { v4 as uuidv4 } from "uuid";
 import { db } from "../firebaseConfig";
 import AuthService from "./AuthService";
+import LocalDatabaseService from "./LocalDatabaseService";
 
 export default class ClaimService {
   static instance = null;
@@ -23,24 +24,29 @@ export default class ClaimService {
   }
 
   async getClaims() {
-    const q = query(this._claimsRef, where("deletedAt", "==", null));
-    const querySnapshot = await getDocs(q);
+    const notDeletedQuery = query(this._claimsRef, where("deletedAt", "==", null));
+    const querySnapshot = await getDocs(notDeletedQuery);
+    const allTags = await this.getTags();
 
-    return await Promise.all(querySnapshot.docs.map(async (doc) => {
+    const request = querySnapshot.docs.map(async (doc) => {
       const data = doc.data();
       const date = data.date.toDate();
 
-      const tags = data.tags?.length ? await Promise.all(data.tags.map(async (tagRef) => {
-        const tagDoc = await getDoc(tagRef);
-        return tagDoc.data();
-      })) : [];
+      const tags = data.tags?.map((tag) => {
+        return allTags.find((tagData) => tagData.id === tag.id);
+      }) || [];
 
       return {
         ...data,
         date,
         tags
       };
-    }));
+    });
+
+    const result = await Promise.all(request);
+    LocalDatabaseService.getInstance().saveClaims(result);
+
+    return result;
   }
 
   async createClaim(claim) {
