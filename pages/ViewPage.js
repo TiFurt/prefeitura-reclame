@@ -1,13 +1,14 @@
 import { AntDesign } from "@expo/vector-icons";
 import { format } from "date-fns";
 import { useEffect, useState } from "react";
-import { Image, ScrollView, StyleSheet, Text, View, useWindowDimensions } from "react-native";
+import { Alert, Image, ScrollView, StyleSheet, Text, View, useWindowDimensions } from "react-native";
 import MapView, { Marker } from 'react-native-maps';
 import { SceneMap, TabView } from 'react-native-tab-view';
 import FloatingActionComponent from "../components/FloatingActionComponent";
 import TagComponent from "../components/TagComponent";
 import { routes } from "../routes";
 import AuthService from "../services/AuthService";
+import ClaimService from "../services/ClaimService";
 
 export default function ViewPage({ route, navigation }) {
   const { claim } = route?.params || {};
@@ -25,14 +26,11 @@ export default function ViewPage({ route, navigation }) {
   };
 
   const updateCanUserEdit = () => {
-    console.log(AuthService.getInstance().isAuthenticated());
-    console.log(claim?.userId === AuthService.getInstance().getCurrentUser()?.uid);
     if (!claim?.id || !claim?.userId) {
       return;
     }
 
     AuthService.getInstance().onAuthStateChanged((user) => {
-      console.log(claim?.userId, user?.uid);
       setCanUserEdit(claim?.userId === user?.uid);
     });
   };
@@ -49,6 +47,26 @@ export default function ViewPage({ route, navigation }) {
   const _redirectToCreateClaimPage = () => {
     navigation.navigate(routes.CreateClaim, { claim });
   };
+
+  const _deleteClaim = async () => {
+    if (!canUserEdit) {
+      return;
+    }
+
+    await ClaimService.getInstance().deleteClaim(claim.id)
+    navigation.popToTop();
+    navigation.replace(routes.Home);
+  }
+
+  const _confirmDelete = () =>
+    Alert.alert('Deletar Reclamação', 'Tem certeza que deseja deletar essa reclamação?', [
+      {
+        text: 'Cancelar',
+        onPress: () => console.log('Cancel Pressed'),
+        style: 'cancel',
+      },
+      { text: 'DELETAR', onPress: _deleteClaim },
+    ]);
 
   const infoTab = () => (
     <View style={styles.container}>
@@ -75,6 +93,15 @@ export default function ViewPage({ route, navigation }) {
           : <View style={styles.noImage}><Text>Imagem não registrada</Text></View>
         }
       </ScrollView>
+
+      <FloatingActionComponent
+        hide={!canUserEdit}
+        danger={true}
+        onPressItem={_confirmDelete}
+        title="Deletar Reclamação" accessibilityLabel="Deletar Reclamação"
+      >
+        <AntDesign color="white" name="delete" size={20} />
+      </FloatingActionComponent>
 
       <FloatingActionComponent
         hide={!canUserEdit}

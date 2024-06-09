@@ -1,7 +1,6 @@
-import "react-native-get-random-values";
-import { db } from "../firebaseConfig";
-import { collection, doc, setDoc, getDoc, getDocs, serverTimestamp, updateDoc } from "firebase/firestore";
+import { collection, doc, getDoc, getDocs, query, serverTimestamp, setDoc, updateDoc, where } from "firebase/firestore";
 import { v4 as uuidv4 } from "uuid";
+import { db } from "../firebaseConfig";
 import AuthService from "./AuthService";
 
 export default class ClaimService {
@@ -24,7 +23,8 @@ export default class ClaimService {
   }
 
   async getClaims() {
-    const querySnapshot = await getDocs(this._claimsRef);
+    const q = query(this._claimsRef, where("deletedAt", "==", null));
+    const querySnapshot = await getDocs(q);
 
     return await Promise.all(querySnapshot.docs.map(async (doc) => {
       const data = doc.data();
@@ -51,7 +51,8 @@ export default class ClaimService {
       date: serverTimestamp(),
       ...claim,
       tags,
-      userId: AuthService.getInstance().getCurrentUser().uid
+      userId: AuthService.getInstance().getCurrentUser()?.uid,
+      deletedAt: null
     };
     await setDoc(doc(db, "claims", id), newClaim);
   }
@@ -60,8 +61,13 @@ export default class ClaimService {
     const tags = claimToSave.tags?.map((tag) => doc(db, "tags", tag)) || [];
     const updatedClaim = {
       ...claimToSave,
-      tags: tags
+      tags: tags,
+      deletedAt: null
     };
     await updateDoc(doc(db, "claims", claimToSave.id), updatedClaim);
+  }
+
+  async deleteClaim(claimId) {
+    await updateDoc(doc(db, "claims", claimId), { deletedAt: serverTimestamp() });
   }
 }
