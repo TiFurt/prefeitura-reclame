@@ -3,6 +3,7 @@ import { db } from "../firebaseConfig";
 import { collection, doc, setDoc, getDoc, getDocs, serverTimestamp, updateDoc } from "firebase/firestore";
 import { v4 as uuidv4 } from "uuid";
 import AuthService from "./AuthService";
+import LocalDatabaseService from "./LocalDatabaseService";
 
 export default class ClaimService {
   static instance = null;
@@ -27,7 +28,7 @@ export default class ClaimService {
     const querySnapshot = await getDocs(this._claimsRef);
     const allTags = await this.getTags();
 
-    const result = querySnapshot.docs.map(async (doc) => {
+    const request = querySnapshot.docs.map(async (doc) => {
       const data = doc.data();
       const date = data.date.toDate();
 
@@ -42,7 +43,10 @@ export default class ClaimService {
       };
     });
 
-    return Promise.all(result);
+    const result = await Promise.all(request);
+    LocalDatabaseService.getInstance().saveClaims(result);
+
+    return result;
   }
 
   async createClaim(claim) {
