@@ -7,6 +7,7 @@ import BasePage from "../components/BasePage";
 import FloatingActionComponent from "../components/FloatingActionComponent";
 import { routes } from "../routes";
 import ClaimService from "../services/ClaimService";
+import AuthService from "../services/AuthService";
 
 
 export default function CreateClaimPage({ route, navigation }) {
@@ -19,6 +20,10 @@ export default function CreateClaimPage({ route, navigation }) {
   const [location, setLocation] = useState(null);
   const [hasMediaLibraryPermission, setHasMediaLibraryPermission] = useState();
   const [tags, setTags] = useState([]);
+  const [canUserSave, setCanUserSave] = useState(
+    AuthService.getInstance().isAuthenticated() &&
+    claim?.userId === AuthService.getInstance().getCurrentUser()?.uid
+  );
 
   const fetchTags = async () => {
     try {
@@ -27,6 +32,16 @@ export default function CreateClaimPage({ route, navigation }) {
     } catch (error) {
       console.error('Error fetching tags:', error);
     }
+  };
+
+  const updateCanUserSave = () => {
+    if (!claim?.id || !claim?.userId) {
+      return;
+    }
+
+    AuthService.getInstance().onAuthStateChanged((user) => {
+      setCanUserSave(claim?.userId === user?.uid);
+    });
   };
 
 
@@ -38,6 +53,7 @@ export default function CreateClaimPage({ route, navigation }) {
     })();
 
     fetchTags();
+    updateCanUserSave();
   }, []);
 
   const _savePhotoOnGallery = () => {
@@ -49,6 +65,10 @@ export default function CreateClaimPage({ route, navigation }) {
   };
 
   const _saveClaim = async () => {
+    if (!canUserSave) {
+      return;
+    }
+
     _savePhotoOnGallery();
 
     if (claim?.id) {

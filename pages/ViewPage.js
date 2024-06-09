@@ -1,21 +1,46 @@
 import { AntDesign } from "@expo/vector-icons";
 import { format } from "date-fns";
-import { useState } from 'react';
+import { useEffect, useState } from "react";
 import { Image, ScrollView, StyleSheet, Text, View, useWindowDimensions } from "react-native";
 import MapView, { Marker } from 'react-native-maps';
 import { SceneMap, TabView } from 'react-native-tab-view';
 import FloatingActionComponent from "../components/FloatingActionComponent";
 import TagComponent from "../components/TagComponent";
 import { routes } from "../routes";
+import AuthService from "../services/AuthService";
 
 export default function ViewPage({ route, navigation }) {
   const { claim } = route?.params || {};
+
+  const [canUserEdit, setCanUserEdit] = useState(
+    AuthService.getInstance().isAuthenticated() &&
+    claim?.userId === AuthService.getInstance().getCurrentUser()?.uid
+  );
+
   const region = {
     latitude: claim?.location?.latitude || 0,
     longitude: claim?.location?.longitude || 0,
     latitudeDelta: 0.01,
     longitudeDelta: 0.01,
   };
+
+  const updateCanUserEdit = () => {
+    console.log(AuthService.getInstance().isAuthenticated());
+    console.log(claim?.userId === AuthService.getInstance().getCurrentUser()?.uid);
+    if (!claim?.id || !claim?.userId) {
+      return;
+    }
+
+    AuthService.getInstance().onAuthStateChanged((user) => {
+      console.log(claim?.userId, user?.uid);
+      setCanUserEdit(claim?.userId === user?.uid);
+    });
+  };
+
+
+  useEffect(() => {
+    updateCanUserEdit();
+  }, []);
 
   const tags = claim?.tags?.map((tag) => {
     return <TagComponent key={tag.name} tag={tag} />;
@@ -29,16 +54,22 @@ export default function ViewPage({ route, navigation }) {
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollView}>
         <Text style={styles.header}>{claim.name}</Text>
+
         <View style={styles.tags}>{tags}</View>
+
         <View style={styles.textContainer}>
           <Text style={styles.textContent}>
             <Text style={styles.bold}>Ocorrência: </Text>
+
             {format(new Date(claim.date), "dd/MM/yyy HH:mm:ss")}
           </Text>
+
           <View style={styles.description}>
             <Text>{claim.description}</Text>
           </View>
+
         </View>
+
         {claim.image
           ? <Image source={{ uri: `data:image/png;base64,${claim.image.base64}` }} style={styles.image} />
           : <View style={styles.noImage}><Text>Imagem não registrada</Text></View>
@@ -46,6 +77,7 @@ export default function ViewPage({ route, navigation }) {
       </ScrollView>
 
       <FloatingActionComponent
+        hide={!canUserEdit}
         onPressItem={_redirectToCreateClaimPage}
         title="Editar Reclamação" accessibilityLabel="Editar Reclamação"
       >

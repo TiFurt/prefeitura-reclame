@@ -1,6 +1,10 @@
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 
-export default function FloatingActionComponent({ children, onPressItem, title, accessibilityLabel }) {
+export default function FloatingActionComponent({ hide, children, onPressItem, title, accessibilityLabel }) {
+  if (hide) {
+    return null;
+  }
+
   return (
     <TouchableOpacity
       onPress={onPressItem}

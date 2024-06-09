@@ -2,6 +2,7 @@ import "react-native-get-random-values";
 import { db } from "../firebaseConfig";
 import { collection, doc, setDoc, getDoc, getDocs, serverTimestamp, updateDoc } from "firebase/firestore";
 import { v4 as uuidv4 } from "uuid";
+import AuthService from "./AuthService";
 
 export default class ClaimService {
   static instance = null;
@@ -24,16 +25,16 @@ export default class ClaimService {
 
   async getClaims() {
     const querySnapshot = await getDocs(this._claimsRef);
-    
+
     return await Promise.all(querySnapshot.docs.map(async (doc) => {
       const data = doc.data();
       const date = data.date.toDate();
-      
+
       const tags = data.tags?.length ? await Promise.all(data.tags.map(async (tagRef) => {
         const tagDoc = await getDoc(tagRef);
         return tagDoc.data();
       })) : [];
-      
+
       return {
         ...data,
         date,
@@ -49,7 +50,8 @@ export default class ClaimService {
       id,
       date: serverTimestamp(),
       ...claim,
-      tags
+      tags,
+      userId: AuthService.getInstance().getCurrentUser().uid
     };
     await setDoc(doc(db, "claims", id), newClaim);
   }
