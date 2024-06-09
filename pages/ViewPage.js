@@ -25,14 +25,11 @@ export default function ViewPage({ route, navigation }) {
   };
 
   const updateCanUserEdit = () => {
-    console.log(AuthService.getInstance().isAuthenticated());
-    console.log(claim?.userId === AuthService.getInstance().getCurrentUser()?.uid);
     if (!claim?.id || !claim?.userId) {
       return;
     }
 
     AuthService.getInstance().onAuthStateChanged((user) => {
-      console.log(claim?.userId, user?.uid);
       setCanUserEdit(claim?.userId === user?.uid);
     });
   };

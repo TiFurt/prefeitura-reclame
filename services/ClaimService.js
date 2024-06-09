@@ -25,22 +25,24 @@ export default class ClaimService {
 
   async getClaims() {
     const querySnapshot = await getDocs(this._claimsRef);
+    const allTags = await this.getTags();
 
-    return await Promise.all(querySnapshot.docs.map(async (doc) => {
+    const result = querySnapshot.docs.map(async (doc) => {
       const data = doc.data();
       const date = data.date.toDate();
 
-      const tags = data.tags?.length ? await Promise.all(data.tags.map(async (tagRef) => {
-        const tagDoc = await getDoc(tagRef);
-        return tagDoc.data();
-      })) : [];
+      const tags = data.tags?.map((tag) => {
+        return allTags.find((tagData) => tagData.id === tag.id);
+      }) || [];
 
       return {
         ...data,
         date,
         tags
       };
-    }));
+    });
+
+    return Promise.all(result);
   }
 
   async createClaim(claim) {
