@@ -1,5 +1,5 @@
 import { signal } from "@preact/signals-core";
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import { getAuth, createUserWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
 import { db } from "../firebaseConfig";
 
@@ -7,6 +7,7 @@ export default class AuthService {
   static instance = null;
 
   authenticated = signal(false);
+  auth = getAuth();
 
   static getInstance() {
     if (AuthService.instance == null) {
@@ -29,8 +30,7 @@ export default class AuthService {
   }
 
   register(user) {
-    const auth = getAuth();
-    const createResponse = createUserWithEmailAndPassword(auth, user.email, user.password);
+    const createResponse = createUserWithEmailAndPassword(this.auth, user.email, user.password);
 
     createResponse
       .then((userCredential) => {
@@ -51,5 +51,13 @@ export default class AuthService {
       ...user
     };
     await setDoc(doc(db, "users", uid), newuser);
+  }
+
+  onAuthStateChanged(onChange) {
+    onAuthStateChanged(this.auth, (user) => onChange(user));
+  }
+
+  getCurrentUser() {
+    return this.auth.currentUser;
   }
 }
