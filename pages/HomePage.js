@@ -1,7 +1,7 @@
 import { AntDesign } from "@expo/vector-icons";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { useIsFocused } from '@react-navigation/native';
-import { authenticateAsync, hasHardwareAsync } from "expo-local-authentication";
+import { authenticateAsync, hasHardwareAsync, supportedAuthenticationTypesAsync } from "expo-local-authentication";
 import { useEffect, useState } from "react";
 import { ScrollView, StyleSheet, Text, TouchableOpacity } from "react-native";
 import BasePage from "../components/BasePage";
@@ -42,32 +42,42 @@ export default function HomePage({ navigation }) {
     }
   }, [isFocused]);
 
-  const _authenticateBiometryAsync = async () => {
-    const result = await authenticateAsync();
-    if (!result.success) {
-      return;
-    }
-
-    setIsAuthenticated(true);
+  const _authenticateBiometryAsync = () => {
+    authenticateAsync().then((result) => {
+      if (result.success) {
+        setIsAuthenticated(true);
+      } else {
+        console.log('Biometric authentication failed');
+      }
+    }).catch((error) => {
+      console.error('Error during biometric authentication:', error);
+    });
   };
 
-  const _hasBiometryHardware = async () => {
-    const valid = await hasHardwareAsync();
-    setBiometry(valid);
+  const _hasBiometryHardware = () => {
+    hasHardwareAsync().then((valid) => {
+      setBiometry(valid)
 
-    if (valid) {
-      await _authenticateBiometryAsync();
+      if (valid) {
+        _authenticateBiometryAsync();
+      }
+    }).catch((error) => {
+      console.error('Error checking biometry hardware:', error);
+    });
+  };
+
+  const _checkAuthAndBiometry = () => {
+    if (AuthService.getInstance().recentAuthenticated) {
+      setBiometry(true);
+      setIsAuthenticated(true);
+    } else {
+      _hasBiometryHardware();
     }
   };
 
   useEffect(() => {
-    if (AuthService.getInstance().recentAuthenticated) {
-      setBiometry(true);
-      setIsAuthenticated(true);
-      return;
-    }
 
-    (async () => await _hasBiometryHardware())();
+    _checkAuthAndBiometry();
   }, []);
 
   if (!biometry) {
@@ -84,13 +94,12 @@ export default function HomePage({ navigation }) {
         <Text>Autentique-se para continuar.</Text>
 
         <TouchableOpacity
-          onPress={(async () => await _authenticateBiometryAsync())}
+          onPress={_authenticateBiometryAsync}
           style={styles.submit}
           title="Entrar"
           accessibilityLabel="Entrar"
         >
           <Text style={styles.submitLabel}>Autenticar com biometria</Text>
-
           <FontAwesome5 name="fingerprint" size={20} color="white" />
         </TouchableOpacity>
       </BasePage>

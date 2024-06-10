@@ -11,7 +11,7 @@ export default class LocalDatabaseService {
     return LocalDatabaseService.instance;
   }
 
-  db = SQLite.openDatabase("local.db");
+  db = SQLite.openDatabaseSync("local.db");
 
   initDb() {
     this.db.transaction(tx => {

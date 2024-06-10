@@ -1,36 +1,15 @@
-import { authenticateAsync, hasHardwareAsync } from "expo-local-authentication";
 import { FontAwesome5 } from "@expo/vector-icons";
-import React, { useEffect, useState } from "react";
-import { Text, TextInput, TouchableOpacity, StyleSheet } from "react-native";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import React, { useState } from "react";
+import { StyleSheet, Text, TextInput, TouchableOpacity } from "react-native";
 import BasePage from "../components/BasePage";
 import { routes } from "../routes";
 import AuthService from "../services/AuthService";
 
 export default function LoginPage({ navigation }) {
-  const [biometry, setBiometry] = useState(false);
   const [validation, setValidation] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-
-  authenticateBiometryAsync = async () => {
-    const result = await authenticateAsync();
-    if (!result.success) {
-      setValidation('Falha na autenticação com biometria');
-      return;
-    }
-
-    redirectToHome()
-  };
-
-  hasBiometryHardware = async () => {
-    const valid = await hasHardwareAsync();
-    setBiometry(valid);
-
-    if (valid) {
-      await authenticateBiometryAsync();
-    }
-  };
 
   login = async () => {
     if (!email) {
@@ -93,10 +72,6 @@ export default function LoginPage({ navigation }) {
     navigation.replace(routes.Home);
   }
 
-  useEffect(() => {
-    (async () => await hasBiometryHardware())();
-  }, []);
-
   return (
     <BasePage>
       <Text style={styles.header}>Entre com sua conta</Text>
@@ -126,7 +101,6 @@ export default function LoginPage({ navigation }) {
         <FontAwesome5 name="sign-in-alt" size={20} color="white" />
       </TouchableOpacity>
 
-      {!biometry && <Text>Seu dispositivo não tem suporte para biometria.</Text>}
       {validation && <Text style={styles.errorMessage}> {validation} </Text>}
     </BasePage>
   );

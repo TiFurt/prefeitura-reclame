@@ -1,13 +1,17 @@
 import { signal } from "@preact/signals-core";
-import { getAuth, createUserWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
+import ReactNativeAsyncStorage from '@react-native-async-storage/async-storage';
+import { createUserWithEmailAndPassword, getReactNativePersistence, initializeAuth, onAuthStateChanged } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
 import { db } from "../firebaseConfig";
+import { app } from "../firebaseConfig";
 
 export default class AuthService {
   static instance = null;
 
-  authenticated = signal(false);
-  auth = getAuth();
+  recentAuthenticated = false;
+  auth = initializeAuth(app, {
+    persistence: getReactNativePersistence(ReactNativeAsyncStorage)
+  });
 
   static getInstance() {
     if (AuthService.instance == null) {
@@ -18,15 +22,15 @@ export default class AuthService {
   }
 
   login() {
-    this.authenticated.value = true;
+    this.recentAuthenticated = true;
   }
 
   logout() {
-    this.authenticated.value = false;
+    this.recentAuthenticated = false;
   }
 
   isAuthenticated() {
-    return this.authenticated;
+    return !!this.auth.currentUser;
   }
 
   register(user) {
