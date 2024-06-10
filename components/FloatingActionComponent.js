@@ -1,14 +1,25 @@
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 
-export default function FloatingActionComponent({ hide, children, onPressItem, title, accessibilityLabel }) {
+export default function FloatingActionComponent({
+  hide,
+  danger,
+  children,
+  onPressItem,
+  title,
+  accessibilityLabel
+}) {
   if (hide) {
     return null;
+  }
+
+  _getStyles = () => {
+    return danger ? styles.buttonDanger : styles.button;
   }
 
   return (
     <TouchableOpacity
       onPress={onPressItem}
-      style={styles.button}
+      style={_getStyles()}
       title={title}
       accessibilityLabel={accessibilityLabel}
     >
@@ -25,6 +36,16 @@ const styles = StyleSheet.create({
     bottom: 30,
     right: 30,
     backgroundColor: "#1253bc",
+    borderRadius: 50,
+    padding: 15,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  buttonDanger: {
+    position: "absolute",
+    bottom: 95,
+    right: 30,
+    backgroundColor: "#ff0000",
     borderRadius: 50,
     padding: 15,
     justifyContent: "center",
