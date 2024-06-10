@@ -17,6 +17,7 @@
     "expo-local-authentication": "~13.8.0",
     "expo-location": "^16.5.5",
     "expo-media-library": "~15.9.2",
+    "expo-sqlite": "~13.4.0",
     "expo-status-bar": "~1.11.1",
     "firebase": "^10.12.2",
     "react": "18.2.0",
@@ -27,12 +28,10 @@
     "react-native-maps": "^1.10.0",
     "react-native-pager-view": "^6.2.3",
     "react-native-tab-view": "^3.5.2",
-    "uuid": "^9.0.1",
-    "expo-sqlite": "~13.4.0"
+    "uuid": "^9.0.1"
   },
   "devDependencies": {
-    "@babel/core": "^7.20.0",
-    "metro": "^0.80.9"
+    "@babel/core": "^7.20.0"
   },
   "private": true
 }

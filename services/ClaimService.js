@@ -3,7 +3,7 @@ import { db } from "../firebaseConfig";
 import { collection, doc, setDoc, getDoc, getDocs, serverTimestamp, updateDoc } from "firebase/firestore";
 import { v4 as uuidv4 } from "uuid";
 import AuthService from "./AuthService";
-import LocalDatabaseService from "./LocalDatabaseService";
+import LocalDatabaseService from "./LocalDatabase";
 
 export default class ClaimService {
   static instance = null;

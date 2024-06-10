@@ -10,13 +10,13 @@ import RegisterPage from "./pages/RegisterPage";
 import WelcomePage from "./pages/WelcomePage";
 import { routes } from "./routes";
 import CameraPage from "./pages/CameraPage";
-import LocalDatabaseService from "./services/LocalDatabaseService";
+import { initDb } from "./services/LocalDatabase";
 
 const Stack = createNativeStackNavigator();
 
 export default function App() {
   useEffect(() => {
-    LocalDatabaseService.getInstance().initDb();
+    initDb();
   }, []);
 
   return (
