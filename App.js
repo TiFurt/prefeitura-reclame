@@ -66,8 +66,6 @@ export default function App() {
     setInitialRouteName(routes.Welcome);
   };
 
-  console.log('initialRouteName', initialRouteName);
-
   if (!initialRouteName) {
     return null;
   }
