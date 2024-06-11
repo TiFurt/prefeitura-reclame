@@ -19,7 +19,10 @@ export const initDb = async () => {
 }
 
 export const saveClaims = async (claims) => {
+  claims = claims.filter(c => !c.deletedAt);
   const localClaims = await getAllClaims();
+  const toDelete = localClaims.filter(c => !claims.find(r => r.id === c.id));
+  await deleteClaims(toDelete);
 
   for (const claim of claims) {
     const exists = localClaims.find(c => c.id === claim.id);
@@ -46,6 +49,20 @@ export const saveClaims = async (claims) => {
 
     try {
       await db.execAsync(updateSql);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+}
+
+export const deleteClaims = async (claims) => {
+  for (const claim of claims) {
+    const deleteSql = `
+      DELETE FROM claims
+      WHERE id = "${claim.id}";`
+
+    try {
+      await db.execAsync(deleteSql);
     } catch (error) {
       console.error(error);
     }
