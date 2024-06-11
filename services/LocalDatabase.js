@@ -1,6 +1,6 @@
 import * as SQLite from 'expo-sqlite';
 
-const db = SQLite.openDatabase('local.db');
+const db = SQLite.openDatabaseSync('local.db');
 
 export const initDb = async () => {
   await db.execAsync(`

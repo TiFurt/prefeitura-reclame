@@ -1,31 +1,39 @@
 import { AntDesign } from "@expo/vector-icons";
-import { Camera, PermissionStatus as CameraPermissionStatus, CameraType } from 'expo-camera';
+import { CameraView, useCameraPermissions } from 'expo-camera';
 import { PermissionStatus as LocationPermissionStatus, getCurrentPositionAsync, requestForegroundPermissionsAsync } from "expo-location";
 import { useEffect, useRef, useState } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View, Button } from 'react-native';
+import "react-native-get-random-values";
 import { v4 as uuidv4 } from "uuid";
 
 export default function CameraPage({ route, navigation }) {
   const ref = useRef(null);
-  const [hasPermission, setHasPermission] = useState(null);
-  const [type, setType] = useState(CameraType.back);
+  const [facing, setFacing] = useState('back');
   const [hasLocation, setHasLocation] = useState(false);
+  const [permission, requestPermission] = useCameraPermissions();
 
   useEffect(() => {
     (async () => {
-      const cameraPermission = await Camera.requestCameraPermissionsAsync();
       const locationPermission = await requestForegroundPermissionsAsync();
 
-      setHasPermission(cameraPermission.status === CameraPermissionStatus.GRANTED);
       setHasLocation(locationPermission.status === LocationPermissionStatus.GRANTED);
     })();
   }, []);
 
-  if (!hasPermission || !hasLocation) {
+  if (!permission || !hasLocation) {
     return <Text>Libere o uso da câmera e da localização para continuar</Text>;
   }
 
-  async function take() {
+  if (!permission.granted) {
+    return (
+      <View style={styles.container}>
+        <Text style={{ textAlign: 'center' }}>Precisamos de permissão para acessar a câmera</Text>
+        <Button onPress={requestPermission} title="Permitir" />
+      </View>
+    );
+  }
+
+  const _take = async () => {
     if (ref) {
       const currentLocation = await getCurrentPositionAsync({});
       const picture = await ref.current.takePictureAsync({ base64: true, quality: 0.5 });
@@ -38,27 +46,25 @@ export default function CameraPage({ route, navigation }) {
     }
   }
 
+  const _toggleCameraFacing = () => {
+    setFacing(current => (current === 'back' ? 'front' : 'back'));
+  }
+
   return (
-    <Camera style={styles.camera} type={type} ref={ref}>
+    <CameraView style={styles.camera} facing={facing} ref={ref}>
       <View style={styles.buttonContainer}>
         <TouchableOpacity
           style={styles.buttonFlip}
-          onPress={() => {
-            setType(
-              type === CameraType.back
-                ? CameraType.front
-                : CameraType.back
-            );
-          }}>
+          onPress={_toggleCameraFacing}>
           <AntDesign color="black" name="retweet" size={40} />
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.buttonTake}
-          onPress={take}>
+          onPress={_take}>
           <AntDesign color="black" name="camera" size={40} />
         </TouchableOpacity>
       </View>
-    </Camera>
+    </CameraView>
   );
 }
 

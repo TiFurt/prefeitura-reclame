@@ -95,9 +95,13 @@ export default function CreateClaimPage({ route, navigation }) {
     });
   };
 
+  const _setPhoto = (photo) => {
+    setPhoto(photo);
+  }
+
   const _openCamera = () => {
     navigation.navigate(routes.Camera, {
-      setPhoto,
+      setPhoto: _setPhoto,
       setLocation,
     });
   }

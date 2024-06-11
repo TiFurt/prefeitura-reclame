@@ -26,13 +26,12 @@ export default function HomePage({ navigation }) {
     navigation.navigate(routes.CreateClaim);
   };
 
-  const fetchClaims = async () => {
-    try {
-      const claimData = await ClaimService.getInstance().getClaims();
+  const fetchClaims = () => {
+    ClaimService.getInstance().getClaims().then((claimData) => {
       setClaims(claimData);
-    } catch (error) {
+    }).catch((error) => {
       console.error('Error fetching claims:', error);
-    }
+    });
   };
 
   useEffect(() => {
