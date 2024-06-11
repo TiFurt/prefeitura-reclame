@@ -3,7 +3,8 @@ import "react-native-get-random-values";
 import { v4 as uuidv4 } from "uuid";
 import { db } from "../firebaseConfig";
 import AuthService from "./AuthService";
-import { saveClaims } from "./LocalDatabase";
+import { getAllClaims, saveClaims } from "./LocalDatabase";
+import { getIsConnected } from "./NetworkInfo";
 
 export default class ClaimService {
   static instance = null;
@@ -25,6 +26,14 @@ export default class ClaimService {
   }
 
   async getClaims() {
+    if (!getIsConnected()) {
+      return (await getAllClaims(true))
+        .map((claim) => {
+          claim.tags = JSON.parse(claim.tags);
+          return claim;
+        });
+    }
+
     const notDeletedQuery = query(this._claimsRef, where("deletedAt", "==", null));
     const querySnapshot = await getDocs(notDeletedQuery);
     const allTags = await this.getTags();

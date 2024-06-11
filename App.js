@@ -11,6 +11,7 @@ import WelcomePage from "./pages/WelcomePage";
 import { routes } from "./routes";
 import CameraPage from "./pages/CameraPage";
 import { initDb } from "./services/LocalDatabase";
+import { listenConnection } from "./services/NetworkInfo";
 import AuthService from "./services/AuthService";
 import { navigationRef, popToTop, replace } from './RootNavigation';
 
@@ -21,6 +22,7 @@ export default function App() {
 
   useEffect(() => {
     initDb();
+    listenConnection();
 
     AuthService.getInstance().onAuthStateChanged((user) => {
       if (!!user?.uid) {
