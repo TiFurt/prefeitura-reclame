@@ -46,7 +46,6 @@ export const saveClaims = async (claims) => {
 
     try {
       await db.execAsync(updateSql);
-      console.log('Claim updated');
     } catch (error) {
       console.error(error);
     }
