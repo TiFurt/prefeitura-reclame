@@ -20,8 +20,9 @@ export const initDb = async () => {
 export const saveClaims = async (claims) => {
   const localClaims = await getAllClaims();
 
-  claims.forEach(async claim => {
+  for (const claim of claims) {
     const exists = localClaims.find(c => c.id === claim.id);
+
     if (!exists) {
       const tagsJson = JSON.stringify(claim.tags).replace(/"/g, '""');
       const createSql = `
@@ -33,8 +34,22 @@ export const saveClaims = async (claims) => {
       } catch (error) {
         console.error(error);
       }
+
+      continue;
     }
-  });
+
+    const tagsJson = JSON.stringify(claim.tags).replace(/"/g, '""');
+    const updateSql = `
+      UPDATE claims
+      SET date = "${claim.date}", description = "${claim.description}", latitude = ${claim.location.latitude}, longitude = ${claim.location.longitude}, name = "${claim.name}", tags = "${tagsJson}", user = "${claim.userId}"
+      WHERE id = "${claim.id}";`
+
+    try {
+      await db.execAsync(updateSql);
+    } catch (error) {
+      console.error(error);
+    }
+  }
 }
 
 export const getAllClaims = async () => {
