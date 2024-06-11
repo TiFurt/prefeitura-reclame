@@ -34,16 +34,23 @@ export default function CameraPage({ route, navigation }) {
   }
 
   const _take = async () => {
-    if (ref) {
-      const currentLocation = await getCurrentPositionAsync({});
-      const picture = await ref.current.takePictureAsync({ base64: true, quality: 0.5 });
-      const { setPhoto, setLocation } = route.params;
+    if (ref?.current) {
+      try {
+        const currentLocation = await getCurrentPositionAsync({});
+        const picture = await ref.current.takePictureAsync({ base64: true, quality: 0.5 });
+        const { setPhoto, setLocation } = route.params;
 
-      const { latitude, longitude } = currentLocation.coords;
-      setLocation({ latitude, longitude });
-      setPhoto({ id: uuidv4(), ...picture })
-      navigation.goBack()
+        const { latitude, longitude } = currentLocation.coords;
+        setLocation({ latitude, longitude });
+        setPhoto({ id: uuidv4(), ...picture })
+        navigation.goBack()
+      } catch (error) {
+        console.error('Error taking picture:', error);
+      }
+      return;
     }
+
+    console.error('Camera ref is not available');
   }
 
   const _toggleCameraFacing = () => {

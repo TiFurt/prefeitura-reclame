@@ -20,7 +20,8 @@ export default function CreateClaimPage({ route, navigation }) {
   const [location, setLocation] = useState(null);
   const [hasMediaLibraryPermission, setHasMediaLibraryPermission] = useState();
   const [tags, setTags] = useState([]);
-  const [canUserSave, setCanUserSave] = useState(
+  const [canUserSave, setCanUserSave] = useState(AuthService.getInstance().isAuthenticated());
+  const [canUserUpdate, setCanUpdate] = useState(
     AuthService.getInstance().isAuthenticated() &&
     claim?.userId === AuthService.getInstance().getCurrentUser()?.uid
   );
@@ -40,7 +41,8 @@ export default function CreateClaimPage({ route, navigation }) {
     }
 
     AuthService.getInstance().onAuthStateChanged((user) => {
-      setCanUserSave(claim?.userId === user?.uid);
+      setCanUserSave(!!user);
+      setCanUpdate(user?.uid === claim.userId);
     });
   };
 
@@ -72,6 +74,10 @@ export default function CreateClaimPage({ route, navigation }) {
     _savePhotoOnGallery();
 
     if (claim?.id) {
+      if (!canUserUpdate) {
+        return;
+      }
+
       await ClaimService.getInstance().updateClaim({
         id: claim.id,
         name,
@@ -99,10 +105,14 @@ export default function CreateClaimPage({ route, navigation }) {
     setPhoto(photo);
   }
 
+  const _setLocation = () => {
+    setLocation(location);
+  }
+
   const _openCamera = () => {
     navigation.navigate(routes.Camera, {
       setPhoto: _setPhoto,
-      setLocation,
+      setLocation: _setLocation,
     });
   }
 
