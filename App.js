@@ -1,15 +1,19 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { getNetworkStateAsync } from 'expo-network';
 import React, { useEffect, useState } from 'react';
+import { navigationRef } from './RootNavigation';
+import CameraPage from "./pages/CameraPage";
 import CreateClaimPage from "./pages/CreateClaimPage";
 import HomePage from "./pages/HomePage";
-import ViewPage from "./pages/ViewPage";
 import LoginPage from "./pages/LoginPage";
 import MapPage from "./pages/MapPage";
 import RegisterPage from "./pages/RegisterPage";
+import ViewPage from "./pages/ViewPage";
 import WelcomePage from "./pages/WelcomePage";
 import { routes } from "./routes";
-import CameraPage from "./pages/CameraPage";
+import AuthService from "./services/AuthService";
 import { initDb } from "./services/LocalDatabase";
 import { listenConnection } from "./services/NetworkInfo";
 import AuthService from "./services/AuthService";
@@ -24,13 +28,25 @@ export default function App() {
     initDb();
     listenConnection();
 
-    AuthService.getInstance().onAuthStateChanged((user) => {
-      if (!!user?.uid) {
-        setInitialRouteName(routes.Home);
+    getNetworkStateAsync().then((state) => {
+      if (!state.isConnected) {
+        AsyncStorage.getItem('user').then((user) => {
+          const parsedUser = JSON.parse(user ?? '{}');
+          console.log('parsedUser', parsedUser);
+
+          if (!!parsedUser?.uid) {
+            AuthService.getInstance().autenticate();
+            setInitialRouteName(routes.Home);
+          }
+          else {
+            AuthService.getInstance().deauthenticate();
+            setInitialRouteName(routes.Welcome);
+          }
+        });
+        return;
       }
-      else {
-        setInitialRouteName(routes.Welcome);
-      }
+
+
     });
   }, []);
 
