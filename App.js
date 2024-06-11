@@ -16,8 +16,6 @@ import { routes } from "./routes";
 import AuthService from "./services/AuthService";
 import { initDb } from "./services/LocalDatabase";
 import { listenConnection } from "./services/NetworkInfo";
-import AuthService from "./services/AuthService";
-import { navigationRef, popToTop, replace } from './RootNavigation';
 
 const Stack = createNativeStackNavigator();
 
