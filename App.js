@@ -3,7 +3,6 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { getNetworkStateAsync } from 'expo-network';
 import React, { useEffect, useState } from 'react';
-import { navigationRef } from './RootNavigation';
 import CameraPage from "./pages/CameraPage";
 import CreateClaimPage from "./pages/CreateClaimPage";
 import HomePage from "./pages/HomePage";
@@ -16,6 +15,7 @@ import { routes } from "./routes";
 import AuthService from "./services/AuthService";
 import { initDb } from "./services/LocalDatabase";
 import { listenConnection } from "./services/NetworkInfo";
+import { navigationRef } from './RootNavigation';
 
 const Stack = createNativeStackNavigator();
 
@@ -43,8 +43,6 @@ export default function App() {
         });
         return;
       }
-
-
     });
   }, []);
 
