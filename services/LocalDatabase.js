@@ -13,7 +13,7 @@ export const initDb = async () => {
       name TEXT NOT NULL,
       tags TEXT,
       user VARCHAR(255) NOT NULL,
-      deletedAt DATETIME
+      deletedAt DATETIME DEFAULT NULL
     );`
   );
 }
@@ -31,12 +31,12 @@ export const saveClaims = async (claims) => {
     if (!exists) {
       const createSql = `
         INSERT INTO claims (id, date, description, latitude, longitude, name, tags, user, deletedAt)
-        VALUES ("${claim.id}", "${claim.date}", "${claim.description}", ${claim.location.latitude}, ${claim.location.longitude}, "${claim.name}", "${tagsJson}", "${claim.userId}", "${claim.deletedAt}");`
+        VALUES ("${claim.id}", "${claim.date}", "${claim.description}", ${claim?.location?.latitude ?? 0}, ${claim?.location?.longitude ?? 0}, "${claim.name}", "${tagsJson}", "${claim.userId}", "${claim.deletedAt ?? 'NULL'}");`
 
       try {
         await db.execAsync(createSql);
       } catch (error) {
-        console.error(error);
+        console.error('create', error, claim.id);
       }
 
       continue;
@@ -44,13 +44,13 @@ export const saveClaims = async (claims) => {
 
     const updateSql = `
       UPDATE claims
-      SET date = "${claim.date}", description = "${claim.description}", latitude = ${claim.location.latitude}, longitude = ${claim.location.longitude}, name = "${claim.name}", tags = "${tagsJson}", user = "${claim.userId}", deletedAt = "${claim.deletedAt}"
+      SET date = "${claim.date}", description = "${claim.description}", latitude = ${claim?.location?.latitude}, longitude = ${claim?.location?.longitude}, name = "${claim.name}", tags = "${tagsJson}", user = "${claim.userId}", deletedAt = "${claim.deletedAt ?? 'NULL'}"
       WHERE id = "${claim.id}";`
 
     try {
       await db.execAsync(updateSql);
     } catch (error) {
-      console.error(error);
+      console.error('update', error, claim.id);
     }
   }
 }
@@ -69,6 +69,10 @@ export const deleteClaims = async (claims) => {
   }
 }
 
-export const getAllClaims = async () => {
-  return await db.getAllAsync("SELECT * FROM claims;");
+export const getAllClaims = async (ignoreDeletedAt = true) => {
+  if (ignoreDeletedAt) {
+    return await db.getAllAsync("SELECT * FROM claims;");
+  }
+
+  return await db.getAllAsync("SELECT * FROM claims WHERE deletedAt IS NULL;");
 }

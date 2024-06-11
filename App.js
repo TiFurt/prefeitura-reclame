@@ -17,6 +17,7 @@ import WelcomePage from "./pages/WelcomePage";
 import { routes } from "./routes";
 import AuthService from "./services/AuthService";
 import { initDb } from "./services/LocalDatabase";
+import { listenConnection } from "./services/NetworkInfo";
 
 const Stack = createNativeStackNavigator();
 
@@ -25,6 +26,7 @@ export default function App() {
 
   useEffect(() => {
     initDb();
+    listenConnection();
 
     getNetworkStateAsync().then((state) => {
       if (!state.isConnected) {
