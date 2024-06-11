@@ -4,43 +4,39 @@ const db = SQLite.openDatabaseSync('local.db');
 
 export const initDb = async () => {
   await db.execAsync(`
-      CREATE TABLE IF NOT EXISTS claims (
-        id VARCHAR(255) PRIMARY KEY,
-        date DATETIME NOT NULL,
-        description TEXT NOT NULL,
-        image TEXT,
-        latitude DECIMAL(10,6) NOT NULL,
-        longitude DECIMAL(10,6) NOT NULL,
-        name TEXT NOT NULL,
-        tags TEXT,
-        user VARCHAR(255) NOT NULL
-      );`
+    CREATE TABLE IF NOT EXISTS claims (
+      id VARCHAR(255) PRIMARY KEY,
+      date DATETIME NOT NULL,
+      description TEXT NOT NULL,
+      latitude DECIMAL(10,6) NOT NULL,
+      longitude DECIMAL(10,6) NOT NULL,
+      name TEXT NOT NULL,
+      tags TEXT,
+      user VARCHAR(255) NOT NULL
+    );`
   );
 }
 
 export const saveClaims = async (claims) => {
   const localClaims = await getAllClaims();
 
-  const createSql = `
-    INSERT INTO claims (id, date, description, image, latitude, longitude, name, tags, user)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);`;
+  claims.forEach(async claim => {
+    const exists = localClaims.find(c => c.id === claim.id);
+    if (!exists) {
+      const tagsJson = JSON.stringify(claim.tags).replace(/"/g, '""');
+      const createSql = `
+        INSERT INTO claims (id, date, description, latitude, longitude, name, tags, user)
+        VALUES ("${claim.id}", "${claim.date}", "${claim.description}", ${claim.location.latitude}, ${claim.location.longitude}, "${claim.name}", "${tagsJson}", "${claim.userId}");`
 
-  db.transaction(tx => {
-    claims.forEach(claim => {
-      const exists = localClaims.find(c => c.id === claim.id);
-      if (!exists) {
-        tx.executeSql(createSql,
-          [claim.id, claim.date, claim.description, claim.image, claim.latitude, claim.longitude, claim.name, claim.tags, claim.user],
-          (_, result) => console.log(true, result),
-          (_, error) => console.log(false, error)
-        );
+      try {
+        await db.execAsync(createSql);
+      } catch (error) {
+        console.error(error);
       }
-    });
+    }
   });
 }
 
 export const getAllClaims = async () => {
-  const result = await db.getAllAsync("SELECT * FROM claims;");
-  console.log('getAllClaims', result);
-  return result;
+  return await db.getAllAsync("SELECT * FROM claims;");
 }
