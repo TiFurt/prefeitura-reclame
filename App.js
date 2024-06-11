@@ -18,6 +18,7 @@ import { routes } from "./routes";
 import AuthService from "./services/AuthService";
 import { initDb } from "./services/LocalDatabase";
 import { listenConnection } from "./services/NetworkInfo";
+import { navigationRef } from './RootNavigation';
 
 const Stack = createNativeStackNavigator();
 
