@@ -2,7 +2,7 @@ import { collection, doc, getDoc, getDocs, query, serverTimestamp, setDoc, updat
 import { v4 as uuidv4 } from "uuid";
 import { db } from "../firebaseConfig";
 import AuthService from "./AuthService";
-import LocalDatabaseService from "./LocalDatabase";
+import { saveClaims } from "./LocalDatabase";
 
 export default class ClaimService {
   static instance = null;
@@ -44,7 +44,7 @@ export default class ClaimService {
     });
 
     const result = await Promise.all(request);
-    LocalDatabaseService.getInstance().saveClaims(result);
+    saveClaims(result);
 
     return result;
   }

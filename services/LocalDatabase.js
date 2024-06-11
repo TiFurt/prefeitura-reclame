@@ -1,20 +1,20 @@
 import * as SQLite from 'expo-sqlite';
 
-const db = SQLite.openDatabase('local.db');
+const db = SQLite.openDatabaseSync('local.db');
 
 export const initDb = async () => {
   await db.execAsync(`
-      CREATE TABLE IF NOT EXISTS claims (
-        id VARCHAR(255) PRIMARY KEY,
-        date DATETIME NOT NULL,
-        description TEXT NOT NULL,
-        image TEXT,
-        latitude DECIMAL(10,6) NOT NULL,
-        longitude DECIMAL(10,6) NOT NULL,
-        name TEXT NOT NULL,
-        tags TEXT,
-        user VARCHAR(255) NOT NULL
-      );`
+    CREATE TABLE IF NOT EXISTS claims (
+      id VARCHAR(255) PRIMARY KEY,
+      date DATETIME NOT NULL,
+      description TEXT NOT NULL,
+      image TEXT,
+      latitude DECIMAL(10,6) NOT NULL,
+      longitude DECIMAL(10,6) NOT NULL,
+      name TEXT NOT NULL,
+      tags TEXT,
+      user VARCHAR(255) NOT NULL
+    );`
   );
 }
 
@@ -41,6 +41,5 @@ export const saveClaims = async (claims) => {
 
 export const getAllClaims = async () => {
   const result = await db.getAllAsync("SELECT * FROM claims;");
-  console.log('getAllClaims', result);
   return result;
 }
