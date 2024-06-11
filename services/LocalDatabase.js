@@ -44,7 +44,7 @@ export const saveClaims = async (claims) => {
 
     const updateSql = `
       UPDATE claims
-      SET date = "${claim.date}", description = "${claim.description}", latitude = ${claim?.location?.latitude}, longitude = ${claim?.location?.longitude}, name = "${claim.name}", tags = "${tagsJson}", user = "${claim.userId}", deletedAt = "${claim.deletedAt ?? 'NULL'}"
+      SET date = "${claim.date}", description = "${claim.description}", latitude = ${claim?.location?.latitude ?? 0}, longitude = ${claim?.location?.longitude ?? 0}, name = "${claim.name}", tags = "${tagsJson}", user = "${claim.userId}", deletedAt = "${claim.deletedAt ?? 'NULL'}"
       WHERE id = "${claim.id}";`
 
     try {
