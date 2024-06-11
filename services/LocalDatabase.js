@@ -12,7 +12,8 @@ export const initDb = async () => {
       longitude DECIMAL(10,6) NOT NULL,
       name TEXT NOT NULL,
       tags TEXT,
-      user VARCHAR(255) NOT NULL
+      user VARCHAR(255) NOT NULL,
+      deletedAt DATETIME
     );`
   );
 }
@@ -22,12 +23,12 @@ export const saveClaims = async (claims) => {
 
   for (const claim of claims) {
     const exists = localClaims.find(c => c.id === claim.id);
+    const tagsJson = JSON.stringify(claim.tags).replace(/"/g, '""');
 
     if (!exists) {
-      const tagsJson = JSON.stringify(claim.tags).replace(/"/g, '""');
       const createSql = `
-        INSERT INTO claims (id, date, description, latitude, longitude, name, tags, user)
-        VALUES ("${claim.id}", "${claim.date}", "${claim.description}", ${claim.location.latitude}, ${claim.location.longitude}, "${claim.name}", "${tagsJson}", "${claim.userId}");`
+        INSERT INTO claims (id, date, description, latitude, longitude, name, tags, user, deletedAt)
+        VALUES ("${claim.id}", "${claim.date}", "${claim.description}", ${claim.location.latitude}, ${claim.location.longitude}, "${claim.name}", "${tagsJson}", "${claim.userId}", "${claim.deletedAt}");`
 
       try {
         await db.execAsync(createSql);
@@ -38,10 +39,9 @@ export const saveClaims = async (claims) => {
       continue;
     }
 
-    const tagsJson = JSON.stringify(claim.tags).replace(/"/g, '""');
     const updateSql = `
       UPDATE claims
-      SET date = "${claim.date}", description = "${claim.description}", latitude = ${claim.location.latitude}, longitude = ${claim.location.longitude}, name = "${claim.name}", tags = "${tagsJson}", user = "${claim.userId}"
+      SET date = "${claim.date}", description = "${claim.description}", latitude = ${claim.location.latitude}, longitude = ${claim.location.longitude}, name = "${claim.name}", tags = "${tagsJson}", user = "${claim.userId}", deletedAt = "${claim.deletedAt}"
       WHERE id = "${claim.id}";`
 
     try {
