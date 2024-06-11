@@ -10,7 +10,7 @@ import RegisterPage from "./pages/RegisterPage";
 import WelcomePage from "./pages/WelcomePage";
 import { routes } from "./routes";
 import CameraPage from "./pages/CameraPage";
-import LocalDatabaseService from "./services/LocalDatabaseService";
+import { initDb } from "./services/LocalDatabase";
 import AuthService from "./services/AuthService";
 import { navigationRef, popToTop, replace } from './RootNavigation';
 
@@ -20,7 +20,7 @@ export default function App() {
   const [initialRouteName, setInitialRouteName] = useState('');
 
   useEffect(() => {
-    LocalDatabaseService.getInstance().initDb();
+    initDb();
 
     AuthService.getInstance().onAuthStateChanged((user) => {
       if (!!user?.uid) {
