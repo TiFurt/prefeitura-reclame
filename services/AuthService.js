@@ -26,6 +26,7 @@ export default class AuthService {
 
   logout() {
     this.recentAuthenticated = false;
+    this.auth.signOut();
   }
 
   autenticate(user) {
