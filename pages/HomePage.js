@@ -1,15 +1,14 @@
-import { AntDesign } from "@expo/vector-icons";
-import { FontAwesome5 } from "@expo/vector-icons";
+import { AntDesign, FontAwesome5 } from "@expo/vector-icons";
 import { useIsFocused } from '@react-navigation/native';
-import { authenticateAsync, hasHardwareAsync, supportedAuthenticationTypesAsync } from "expo-local-authentication";
+import { authenticateAsync, hasHardwareAsync } from "expo-local-authentication";
 import { useEffect, useState } from "react";
-import { ScrollView, StyleSheet, Text, TouchableOpacity } from "react-native";
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import BasePage from "../components/BasePage";
 import CardComponent from "../components/CardComponent";
 import FloatingActionComponent from "../components/FloatingActionComponent";
 import { routes } from "../routes";
-import ClaimService from '../services/ClaimService';
 import AuthService from '../services/AuthService';
+import ClaimService from '../services/ClaimService';
 
 export default function HomePage({ navigation }) {
   const [claims, setClaims] = useState([]);
@@ -91,17 +90,19 @@ export default function HomePage({ navigation }) {
   if (!isAuthenticated) {
     return (
       <BasePage>
-        <Text>Autentique-se para continuar.</Text>
+        <View style={styles.autenticateView}>
+          <Text style={styles.title}>Autentique-se para continuar.</Text>
 
-        <TouchableOpacity
-          onPress={_authenticateBiometryAsync}
-          style={styles.submit}
-          title="Entrar"
-          accessibilityLabel="Entrar"
-        >
-          <Text style={styles.submitLabel}>Autenticar com biometria</Text>
-          <FontAwesome5 name="fingerprint" size={20} color="white" />
-        </TouchableOpacity>
+          <TouchableOpacity
+            onPress={_authenticateBiometryAsync}
+            style={styles.submit}
+            title="Entrar"
+            accessibilityLabel="Entrar"
+          >
+            <Text style={styles.submitLabel}>Autenticar com biometria</Text>
+            <FontAwesome5 name="fingerprint" size={20} color="white" />
+          </TouchableOpacity>
+        </View>
       </BasePage>
     );
   }
@@ -129,6 +130,19 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     gap: 10,
     padding: 10,
+  },
+  autenticateView: {
+    height: "100%",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "space-around",
+    alignItems: "center",
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 16,
+    textAlign: "center",
   },
   submit: {
     display: "flex",
