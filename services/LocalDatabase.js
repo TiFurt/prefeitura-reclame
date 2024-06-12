@@ -11,6 +11,7 @@ export const initDb = async () => {
       latitude DECIMAL(10,6) NOT NULL,
       longitude DECIMAL(10,6) NOT NULL,
       name TEXT NOT NULL,
+      image TEXT,
       tags TEXT,
       user VARCHAR(255) NOT NULL,
       deletedAt DATETIME DEFAULT NULL
@@ -29,12 +30,13 @@ export const saveClaims = async (claims, deleteMissing = true) => {
 
   for (const claim of claims) {
     const exists = localClaims.find(c => c.id === claim.id);
+    const imageJson = JSON.stringify(claim.image).replace(/"/g, '""');
     const tagsJson = JSON.stringify(claim.tags).replace(/"/g, '""');
 
     if (!exists) {
       const createSql = `
-        INSERT INTO claims (id, date, description, latitude, longitude, name, tags, user, deletedAt)
-        VALUES ("${claim.id}", "${claim.date}", "${claim.description}", ${claim?.location?.latitude ?? 0}, ${claim?.location?.longitude ?? 0}, "${claim.name}", "${tagsJson}", "${claim.userId}", "${claim.deletedAt ?? 'NULL'}");`
+        INSERT INTO claims (id, date, description, latitude, longitude, name, image, tags, user, deletedAt)
+        VALUES ("${claim.id}", "${claim.date}", "${claim.description}", ${claim?.location?.latitude ?? 0}, ${claim?.location?.longitude ?? 0}, "${claim.name}", "${imageJson}", "${tagsJson}", "${claim.userId}", "${claim.deletedAt ?? 'NULL'}");`
 
       try {
         await db.execAsync(createSql);
@@ -47,7 +49,7 @@ export const saveClaims = async (claims, deleteMissing = true) => {
 
     const updateSql = `
       UPDATE claims
-      SET date = "${claim.date}", description = "${claim.description}", latitude = ${claim?.location?.latitude ?? 0}, longitude = ${claim?.location?.longitude ?? 0}, name = "${claim.name}", tags = "${tagsJson}", user = "${claim.userId}", deletedAt = "${claim.deletedAt ?? 'NULL'}"
+      SET date = "${claim.date}", description = "${claim.description}", latitude = ${claim?.location?.latitude ?? 0}, longitude = ${claim?.location?.longitude ?? 0}, name = "${claim.name}", "${imageJson}", tags = "${tagsJson}", user = "${claim.userId}", deletedAt = "${claim.deletedAt ?? 'NULL'}"
       WHERE id = "${claim.id}";`
 
     try {

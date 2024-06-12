@@ -30,6 +30,7 @@ export default class ClaimService {
       return (await getAllClaims(true))
         .map((claim) => {
           claim.tags = JSON.parse(claim.tags);
+          claim.image = JSON.parse(claim.image);
           return claim;
         });
     }
