@@ -70,7 +70,10 @@ export default class ClaimService {
       userId: AuthService.getInstance().getCurrentUser()?.uid,
       deletedAt: null
     };
-    await setDoc(doc(db, "claims", id), newClaim);
+
+    setDoc(doc(db, "claims", id), newClaim).then(() => {
+      saveClaims([newClaim], false);
+    });
   }
 
   async updateClaim(claimToSave) {
@@ -80,10 +83,17 @@ export default class ClaimService {
       tags: tags,
       deletedAt: null
     };
-    await updateDoc(doc(db, "claims", claimToSave.id), updatedClaim);
+
+    updateDoc(doc(db, "claims", claimToSave.id), updatedClaim).then(() => {
+      saveClaims([updatedClaim], false);
+    });
   }
 
   async deleteClaim(claimId) {
-    await updateDoc(doc(db, "claims", claimId), { deletedAt: serverTimestamp() });
+    updateDoc(doc(db, "claims", claimId), { deletedAt: serverTimestamp() }).then(async () => {
+      const querySnapshot = await getDocs(doc(db, "claims", claimId));
+      const claim = querySnapshot.docs[0].data();
+      saveClaims([claim], false);
+    });
   }
 }
