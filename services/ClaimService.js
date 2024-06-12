@@ -31,6 +31,12 @@ export default class ClaimService {
         .map((claim) => {
           claim.tags = JSON.parse(claim.tags);
           claim.image = JSON.parse(claim.image);
+          claim.location = {
+            latitude: claim.latitude,
+            longitude: claim.longitude
+          };
+          delete claim.latitude;
+          delete claim.longitude;
           return claim;
         });
     }
