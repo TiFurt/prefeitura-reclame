@@ -37,11 +37,11 @@ export default function App() {
           if (!!parsedUser?.uid) {
             AuthService.getInstance().autenticate();
             setInitialRouteName(routes.Home);
+            return;
           }
-          else {
-            AuthService.getInstance().deauthenticate();
-            setInitialRouteName(routes.Welcome);
-          }
+
+          AuthService.getInstance().deauthenticate();
+          setInitialRouteName(routes.Welcome);
         });
         return;
       }
@@ -52,11 +52,13 @@ export default function App() {
         if (!!user?.uid) {
           AuthService.getInstance().autenticate(user);
           setInitialRouteName(routes.Home);
+          navigationRef.resetRoot({ routes: [{ name: routes.Home }] });
+          return;
         }
-        else {
-          AuthService.getInstance().deauthenticate();
-          setInitialRouteName(routes.Welcome);
-        }
+
+        AuthService.getInstance().deauthenticate();
+        setInitialRouteName(routes.Welcome);
+        navigationRef.resetRoot({ routes: [{ name: routes.Welcome }] });
       });
     });
   }, []);

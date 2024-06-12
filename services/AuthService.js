@@ -26,7 +26,11 @@ export default class AuthService {
 
   logout() {
     this.recentAuthenticated = false;
-    this.auth.signOut();
+    this.auth.signOut().then(() => {
+      this.currentUser = null;
+    }).catch((error) => {
+      console.error('Error signing out:', error);
+    });
   }
 
   autenticate(user) {

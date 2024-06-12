@@ -3,10 +3,9 @@ import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import React, { useState } from "react";
 import { StyleSheet, Text, TextInput, TouchableOpacity } from "react-native";
 import BasePage from "../components/BasePage";
-import { routes } from "../routes";
 import AuthService from "../services/AuthService";
 
-export default function LoginPage({ navigation }) {
+export default function LoginPage() {
   const [validation, setValidation] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -68,8 +67,6 @@ export default function LoginPage({ navigation }) {
 
   redirectToHome = () => {
     AuthService.getInstance().login();
-    navigation.popToTop();
-    navigation.replace(routes.Home);
   }
 
   return (
