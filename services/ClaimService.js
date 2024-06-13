@@ -3,7 +3,7 @@ import "react-native-get-random-values";
 import { v4 as uuidv4 } from "uuid";
 import { db } from "../firebaseConfig";
 import AuthService from "./AuthService";
-import { getAllClaims, saveClaims, syncClaims } from "./LocalDatabase";
+import { saveClaims } from "./LocalDatabase";
 import { getIsConnected } from "./NetworkInfo";
 
 export default class ClaimService {
@@ -26,21 +26,6 @@ export default class ClaimService {
   }
 
   async getClaims() {
-    if (!getIsConnected()) {
-      return (await getAllClaims(true))
-        .map((claim) => {
-          claim.tags = JSON.parse(claim.tags);
-          claim.image = JSON.parse(claim.image);
-          claim.location = {
-            latitude: claim.latitude,
-            longitude: claim.longitude
-          };
-          delete claim.latitude;
-          delete claim.longitude;
-          return claim;
-        });
-    }
-
     const notDeletedQuery = query(this._claimsRef, where("deletedAt", "==", null));
     const querySnapshot = await getDocs(notDeletedQuery);
     const allTags = await this.getTags();
@@ -62,7 +47,6 @@ export default class ClaimService {
 
     const result = await Promise.all(request);
     saveClaims(result);
-    syncClaims(result);
 
     return result;
   }
