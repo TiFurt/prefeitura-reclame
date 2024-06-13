@@ -15,6 +15,10 @@ export default function CardComponent({ claim, navigation }) {
     });
   }
 
+  const _getFormattedDate = () => {
+    return claim.date ? format(claim.date, "dd/MM/yyy HH:mm:ss") : "";
+  }
+
   return (
     <TouchableOpacity onPress={_viewClaim}>
       <View style={styles.card}>
@@ -22,7 +26,7 @@ export default function CardComponent({ claim, navigation }) {
         <View style={styles.tags}>{tags}</View>
         <Text style={styles.textContent}>
           <Text style={styles.bold}>Ocorrência: </Text>
-          {format(claim.date, "dd/MM/yyy HH:mm:ss")}
+          {_getFormattedDate()}
         </Text>
 
         <View style={styles.descriptionContainer}>
