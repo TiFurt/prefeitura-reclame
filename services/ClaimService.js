@@ -3,7 +3,7 @@ import "react-native-get-random-values";
 import { v4 as uuidv4 } from "uuid";
 import { db } from "../firebaseConfig";
 import AuthService from "./AuthService";
-import { getAllClaims, saveClaims } from "./LocalDatabase";
+import { getAllClaims, saveClaims, syncClaims } from "./LocalDatabase";
 import { getIsConnected } from "./NetworkInfo";
 
 export default class ClaimService {
@@ -62,11 +62,27 @@ export default class ClaimService {
 
     const result = await Promise.all(request);
     saveClaims(result);
+    syncClaims(result);
 
     return result;
   }
 
   async createClaim(claim) {
+    if (!getIsConnected()) {
+      const id = uuidv4();
+      const newClaim = {
+        ...claim,
+        id,
+        date: new Date(),
+        tags: [],
+        userId: AuthService.getInstance().getCurrentUser()?.uid,
+        deletedAt: null
+      };
+
+      saveClaims([newClaim], false);
+      return;
+    }
+
     const id = uuidv4();
     const tags = claim.tags?.map((tag) => doc(db, "tags", tag)) || [];
     const newClaim = {

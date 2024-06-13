@@ -1,4 +1,5 @@
 import * as SQLite from 'expo-sqlite';
+import { doc, setDoc } from "firebase/firestore";
 
 const db = SQLite.openDatabaseSync('local.db');
 
@@ -80,4 +81,28 @@ export const getAllClaims = async (ignoreDeletedAt = true) => {
   }
 
   return await db.getAllAsync("SELECT * FROM claims WHERE deletedAt IS NULL;");
+}
+
+export const syncClaims = async (claims) => {
+  const localClaims = await getAllClaims();
+  const toSync = localClaims.filter(c => !claims.find(r => r.id === c.id && r.deletedAt == null)).map(c => {
+    return {
+      id: c.id,
+      date: c.date,
+      description: c.description,
+      location: {
+        latitude: c.latitude,
+        longitude: c.longitude
+      },
+      name: c.name,
+      image: JSON.parse(c.image),
+      tags: JSON.parse(c.tags),
+      userId: c.user,
+      deletedAt: c.deletedAt
+    }
+  });
+
+  for (const claim of toSync) {
+    setDoc(doc(db, "claims", claim.id), claim)
+  }
 }
