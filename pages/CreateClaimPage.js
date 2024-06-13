@@ -96,9 +96,7 @@ export default function CreateClaimPage({ route, navigation }) {
       });
     }
 
-    navigation.navigate(routes.Home, {
-      claims: ClaimService.getInstance().claims
-    });
+    navigation.navigate(routes.Home);
   };
 
   const _setPhoto = (photo) => {
