@@ -1,4 +1,4 @@
-import { TouchableOpacity, StyleSheet, Text, View } from 'react-native';
+import { TouchableOpacity, StyleSheet, Text, View, Image } from 'react-native';
 import { FontAwesome5 } from "@expo/vector-icons";
 import BasePage from '../components/BasePage';
 import { routes } from '../routes';
@@ -16,6 +16,8 @@ export default function WelcomePage({ navigation }) {
   return (
     <BasePage>
       <View style={styles.container}>
+        <Image style={styles.img} source={require('../assets/icon-logo.png')} />
+
         <TouchableOpacity
           onPress={_goToLogin}
           style={styles.button}
@@ -62,4 +64,8 @@ const styles = StyleSheet.create({
     color: "white",
     fontWeight: "bold",
   },
+  img: {
+    width: "100%",
+    borderRadius: 5,
+  }
 });
