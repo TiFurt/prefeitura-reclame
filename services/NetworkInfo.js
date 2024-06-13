@@ -9,5 +9,6 @@ export const listenConnection = () => {
 }
 
 export const getIsConnected = () => {
+  // return false;
   return isConnected;
 }

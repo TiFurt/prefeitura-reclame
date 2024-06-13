@@ -60,9 +60,9 @@ export default class ClaimService {
       };
     });
 
-    const result = await Promise.all(request);
-    saveClaims(result);
-    syncClaims(result);
+    let result = await Promise.all(request);
+    const didSync = await syncClaims(result);
+    saveClaims(result, !didSync);
 
     return result;
   }

@@ -1,7 +1,9 @@
 import * as SQLite from 'expo-sqlite';
-import { doc, setDoc } from "firebase/firestore";
+import { collection, doc, setDoc } from "firebase/firestore";
+import { db as firebaseDb } from "../firebaseConfig";
 
 const db = SQLite.openDatabaseSync('local.db');
+const _claimsRef = collection(firebaseDb, "claims");
 
 export const initDb = async () => {
   await db.execAsync(`
@@ -26,6 +28,7 @@ export const saveClaims = async (claims, deleteMissing = true) => {
 
   if (deleteMissing) {
     const toDelete = localClaims.filter(c => !claims.find(r => r.id === c.id));
+    console.log('Deleting claims:', toDelete.map(c => c.id));
     await deleteClaims(toDelete);
   }
 
@@ -85,7 +88,13 @@ export const getAllClaims = async (ignoreDeletedAt = true) => {
 
 export const syncClaims = async (claims) => {
   const localClaims = await getAllClaims();
-  const toSync = localClaims.filter(c => !claims.find(r => r.id === c.id && r.deletedAt == null)).map(c => {
+  const localIds = localClaims.map(c => c.id);
+  const remoteIds = claims.map(c => c.id);
+
+  console.log('Local claims:', localIds);
+  console.log('Remote claims:', remoteIds);
+
+  const toSync = localClaims.filter(local => !claims.find(remote => remote.id === local.id)).map(c => {
     return {
       id: c.id,
       date: c.date,
@@ -102,7 +111,14 @@ export const syncClaims = async (claims) => {
     }
   });
 
+  const idsToSync = toSync.map(c => c.id);
+  console.log('Syncing claims:', idsToSync);
+  let synced = false;
   for (const claim of toSync) {
-    setDoc(doc(db, "claims", claim.id), claim)
+    await setDoc(doc(_claimsRef, claim.id), claim).then(() => {
+      synced = true;
+    })
   }
+
+  return synced;
 }

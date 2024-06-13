@@ -82,6 +82,12 @@ export default function ViewPage({ route, navigation }) {
             {format(new Date(claim.date), "dd/MM/yyy HH:mm:ss")}
           </Text>
 
+          <Text style={styles.textContent}>
+            <Text style={styles.bold}>Id: </Text>
+
+            {claim.id}
+          </Text>
+
           <View style={styles.description}>
             <Text>{claim.description}</Text>
           </View>
