@@ -32,7 +32,6 @@ export default function App() {
       if (!state.isConnected) {
         AsyncStorage.getItem('user').then((user) => {
           const parsedUser = JSON.parse(user ?? '{}');
-          console.log('parsedUser', parsedUser);
 
           if (!!parsedUser?.uid) {
             AuthService.getInstance().autenticate();
