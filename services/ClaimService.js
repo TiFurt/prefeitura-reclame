@@ -1,4 +1,4 @@
-import { collection, doc, getDocs, query, serverTimestamp, setDoc, updateDoc, where } from "firebase/firestore";
+import { collection, doc, getDocs, query, Timestamp, setDoc, updateDoc, where } from "firebase/firestore";
 import "react-native-get-random-values";
 import { v4 as uuidv4 } from "uuid";
 import { db } from "../firebaseConfig";
@@ -47,7 +47,7 @@ export default class ClaimService {
 
     const request = querySnapshot.docs.map(async (doc) => {
       const data = doc.data();
-      const date = data.date.toDate();
+      const date = data.date?.toDate();
 
       const tags = data.tags?.map((tag) => {
         return allTags.find((tagData) => tagData.id === tag.id);
@@ -87,7 +87,7 @@ export default class ClaimService {
     const tags = claim.tags?.map((tag) => doc(db, "tags", tag)) || [];
     const newClaim = {
       id,
-      date: serverTimestamp(),
+      date: Timestamp.fromDate(new Date()),
       ...claim,
       tags,
       userId: AuthService.getInstance().getCurrentUser()?.uid,
@@ -113,7 +113,7 @@ export default class ClaimService {
   }
 
   async deleteClaim(claimId) {
-    updateDoc(doc(db, "claims", claimId), { deletedAt: serverTimestamp() }).then(async () => {
+    updateDoc(doc(db, "claims", claimId), { deletedAt: Timestamp.fromDate(new Date()) }).then(async () => {
       const querySnapshot = await getDocs(doc(db, "claims", claimId));
       const claim = querySnapshot.docs[0].data();
       saveClaims([claim], false);
